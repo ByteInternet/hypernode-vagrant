@@ -12,8 +12,6 @@ vagrant plugin install vagrant-vbguest
 vagrant up
 ```
 
-You might see an error: `==> default: stdin: is not a tty`. This is Vagrant bug [#1673](https://github.com/mitchellh/vagrant/issues/1673) and perfectly harmless. 
-
 ## Using the test environment
 
 ### Uploading files
@@ -44,3 +42,14 @@ Host hn-vagrant
     StrictHostKeyChecking no  # because the host key will change over time
 ```
 
+## Customizing the setup
+
+You might have some ports already in use. Hypernode by default forwards ports 2222 to 22, 3307 to 3306 and 8080 to 80.
+
+If you want to change these ports, just have a look at the Vagrant file. It is pretty self-explanatory.
+
+## Troubleshooting
+
+### ==> default: stdin: is not a tty
+
+This is Vagrant bug [#1673](https://github.com/mitchellh/vagrant/issues/1673) and perfectly harmless.
