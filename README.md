@@ -9,7 +9,7 @@
 
 ## Starting the test environment
 
-```bash
+```
 cd hypernode-vagrant
 vagrant plugin install vagrant-vbguest
 vagrant up
