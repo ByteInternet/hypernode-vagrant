@@ -6,7 +6,7 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "hypernode"
-  config.vm.box_url = "http://debian.byte.nl/custom/vagrant/hypernode.release-current.box"
+  config.vm.box_url = "http://hypernode.com/vagrant/hypernode.releast-latest.box"
 
   config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.network "forwarded_port", guest: 3306, host: 3307
