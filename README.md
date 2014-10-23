@@ -15,6 +15,8 @@ vagrant plugin install vagrant-vbguest
 vagrant up
 ```
 
+You might see an error: `==> default: stdin: is not a tty`. This is Vagrant bug [#1673](https://github.com/mitchellh/vagrant/issues/1673) and perfectly harmless. 
+
 ## Using the test environment
 
 1. Your Magento is available at [http://127.0.0.1:8080](http://127.0.0.1:8080).
