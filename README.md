@@ -10,7 +10,7 @@
 ## Starting the test environment
 
 ```bash
-wget https://hypernode.com/vagrant/hypernode.vbox
+cd hypernode-vagrant
 vagrant plugin install vagrant-vbguest
 vagrant up
 ```
