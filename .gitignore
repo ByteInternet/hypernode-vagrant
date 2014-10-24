@@ -1,2 +1,4 @@
 .vagrant
 .viminfo
+.idea
+*.swp
