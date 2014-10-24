@@ -1,4 +1,4 @@
-# Hypernode test environment
+# Hypernode test environment for MacOSX and Linux
 
 ## Starting the test environment
 
