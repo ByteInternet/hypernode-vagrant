@@ -5,6 +5,8 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.ssh.forward_agent = true
+
   config.vm.box = "hypernode"
   config.vm.box_url = "http://vagrant.hypernode.com/hypernode.release-latest.box"
 
