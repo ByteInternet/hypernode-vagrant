@@ -5,6 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+#config.ssh.username = "app"
   config.ssh.forward_agent = true
 
   config.vm.box = "hypernode"
@@ -17,4 +18,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder "data/web/nginx/", "/data/web/nginx/", owner: "app", group: "app", create: true
 
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
+
 end

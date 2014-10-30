@@ -32,9 +32,7 @@ MySQL is available at 127.0.0.1 port 3307.
 
 SSH is available on 127.0.0.1 port 2222.
 
-To connect directly from the vagrant directory you can use `vagrant ssh`.
-
-You can alternatively use `ssh -p 2222 app@localhost` to connect to SSH. You can also use this config snippet for SSH:
+You can use `ssh -p 2222 app@localhost` to connect to SSH. You can also use this config snippet for SSH:
 
 ```
 Host hn-vagrant
@@ -43,6 +41,9 @@ Host hn-vagrant
     Port 2222
     StrictHostKeyChecking no  # because the host key will change over time
 ```
+
+To connect directly from the vagrant directory you can use `vagrant ssh`. This will log you in as the `vagrant` user.
+It will allow you to use `sudo` and manage the server. The app user should be used for normal usage and as the website user.
 
 ## Customizing the setup
 
