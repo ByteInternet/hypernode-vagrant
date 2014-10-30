@@ -12,12 +12,28 @@ vagrant plugin install vagrant-vbguest
 vagrant up
 ```
 
-## Setting the host
+### Setting the hostname
 You can use [https://github.com/smdahlen/vagrant-hostmanager](vagrant-hostmanager) to automaticly setup and connect your host to your client.
 
 ```
 vagrant plugin install vagrant-hostmanager
 vagrant up
+```
+
+More information about vagrant-hostmanager and usage can be found [https://github.com/smdahlen/vagrant-hostmanager](here). 
+
+If you wish to not use hostmanager remove the lines below from the Vagrantfile
+
+```
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+  config.vm.define 'hypernode' do |node|
+    node.vm.hostname = 'hypernode.local'
+    node.vm.network :private_network, ip: '192.168.33.100'
+    node.hostmanager.aliases = %w(example.hypernode.local hypernode-alias)
+  end
 ```
 
 ## Using the test environment
