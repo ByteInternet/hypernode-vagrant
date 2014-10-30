@@ -12,6 +12,14 @@ vagrant plugin install vagrant-vbguest
 vagrant up
 ```
 
+## Setting the host
+You can use [https://github.com/smdahlen/vagrant-hostmanager](vagrant-hostmanager) to automaticly setup and connect your host to your client.
+
+```
+vagrant plugin install vagrant-hostmanager
+vagrant up
+```
+
 ## Using the test environment
 
 ### Uploading files
@@ -23,6 +31,7 @@ So fire up PHPStorm and edit away locally. Then check out the Hypernode box to s
 ### Webserver
 
 Your Magento is available at [http://127.0.0.1:8080](http://127.0.0.1:8080).
+And when using hostmanager: [http://hypernode.local](http://hypernode.local)
 
 ### MySQL
 
