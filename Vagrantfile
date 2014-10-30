@@ -17,4 +17,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder "data/web/nginx/", "/data/web/nginx/", owner: "app", group: "app", create: true
 
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+  config.vm.define 'hypernode' do |node|
+    node.vm.hostname = 'hypernode.local'
+    node.vm.network :private_network, ip: '192.168.33.100'
+    node.hostmanager.aliases = %w(example.hypernode.local hypernode-alias)
+  end
 end
