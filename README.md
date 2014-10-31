@@ -42,6 +42,9 @@ Host hn-vagrant
     StrictHostKeyChecking no  # because the host key will change over time
 ```
 
+To connect directly from the vagrant directory you can use `vagrant ssh`. This will log you in as the `vagrant` user.
+It will allow you to use `sudo` and manage the server. The app user should be used for normal usage and as the website user.
+
 ## Customizing the setup
 
 You might have some ports already in use. Hypernode by default forwards ports 2222 to 22, 3307 to 3306 and 8080 to 80.
