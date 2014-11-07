@@ -2,3 +2,4 @@
 .viminfo
 .idea
 *.swp
+data/web/public/*
