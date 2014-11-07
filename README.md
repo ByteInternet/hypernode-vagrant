@@ -8,7 +8,7 @@
 
 ```
 cd hypernode-vagrant
-vagrant plugin install vagrant-vbguest
+vagrant plugin install vagrant-vbguest vagrant-hostmanager
 vagrant up
 ```
 
