@@ -22,28 +22,38 @@ So fire up PHPStorm and edit away locally. Then check out the Hypernode box to s
 
 ### Webserver
 
-Your Magento is available at [http://127.0.0.1:8080](http://127.0.0.1:8080).
-
-### MySQL
-
-MySQL is available at 127.0.0.1 port 3307.
+Your Magento is available at [http://hypernode.local/](http://hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).
 
 ### SSH
 
-SSH is available on 127.0.0.1 port 2222.
+SSH is available at hostname hypernode.local, port 22 or at hostname localhost, port 2222.
 
-You can use `ssh -p 2222 app@localhost` to connect to SSH. You can also use this config snippet for SSH:
+```bash
+ssh app@hypernode.local
+```
+
+You can use this config snippet for SSH to ease logging in and then just `ssh hypernode.local`:
 
 ```
-Host hn-vagrant
+Host hypernode.local
     Hostname 127.0.0.1
     User app
-    Port 2222
     StrictHostKeyChecking no  # because the host key will change over time
 ```
 
+### MySQL
+
+MySQL is available at hostname hypernode.local, port 3306 or at hostname localhost, port 3307.
+
+```bash
+# find you MySQL password in ~/.my.cnf by loging in to SSH
+# ssh app@hypernode.local cat ~/.my.cnf
+
+mysql -u app --host=hypernode.local -p
+```
+
 To connect directly from the vagrant directory you can use `vagrant ssh`. This will log you in as the `vagrant` user.
-It will allow you to use `sudo` and manage the server. The app user should be used for normal usage and as the website user.
+This will allow you to use `sudo` and manage the server. Do not use this for normal operation, however, the app user should be used for normal usage and as the website user.
 
 ## Keeping up to date with Hypernode versions
 
