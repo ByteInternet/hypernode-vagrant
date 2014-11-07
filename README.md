@@ -45,6 +45,17 @@ Host hn-vagrant
 To connect directly from the vagrant directory you can use `vagrant ssh`. This will log you in as the `vagrant` user.
 It will allow you to use `sudo` and manage the server. The app user should be used for normal usage and as the website user.
 
+## Keeping up to date with Hypernode versions
+
+With every Hypernode release, we'll update the Hypernode vagrant image as well. Use the following to update your box (you'll lose your MySQL data unless you make a mysqldump first!):
+
+```bash
+vagrant box update
+# optionally backup MySQL, whose data is not currently in a shared directory
+vagrant destroy
+vagrant up
+```
+
 ## Customizing the setup
 
 You might have some ports already in use. Hypernode by default forwards ports 2222 to 22, 3307 to 3306 and 8080 to 80.
