@@ -16,6 +16,8 @@ vagrant plugin install vagrant-vbguest vagrant-hostmanager
 vagrant up
 ```
 
+Voila! Access your local Hypernode through [http://hypernode.local/](http://hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).
+
 ## Using the test environment
 
 ### Uploading files
@@ -23,10 +25,6 @@ vagrant up
 The local directories `data/web/public/` and `data/web/nginx/` are bound to the Vagrant image. You can use this local dir to edit all your files.
 
 So fire up PHPStorm and edit away locally. Then check out the Hypernode box to see results.
-
-### Webserver
-
-Your Magento is available at [http://hypernode.local/](http://hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).
 
 ### SSH
 
