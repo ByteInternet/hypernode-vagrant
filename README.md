@@ -1,12 +1,16 @@
 # Hypernode test environment for MacOSX and Linux
 
+You can start developing on your own local Hypernode within 15 minutes.
+
 ## Starting the test environment
 
-1. Install Virtualbox 4.3.18 or later.
-2. Install Vagrant 1.6.4 or later.
-3. Clone this [repository](https://github.com/ByteInternet/hypernode-vagrant.git) using Git or download the [tarball](https://github.com/ByteInternet/hypernode-vagrant/archive/master.zip) from Github.
+1. Install [Virtualbox 4.3.18 or later](https://www.virtualbox.org/wiki/Downloads).
+2. Install [Vagrant 1.6.4 or later](http://www.vagrantup.com/downloads.html).
+3. Clone this [repository](https://github.com/ByteInternet/hypernode-vagrant.git) using Git or download the [zip file](https://github.com/ByteInternet/hypernode-vagrant/archive/master.zip) from Github.
 
 ```
+# check if version > 1.6.4 ?
+vagrant --version 
 cd hypernode-vagrant
 vagrant plugin install vagrant-vbguest vagrant-hostmanager
 vagrant up
