@@ -25,7 +25,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.hostmanager.ignore_private_ip = false
     config.hostmanager.include_offline = true
     config.vm.define 'hypernode' do |node|
-      node.vm.hostname = 'xxxxxx-dummy-magweb-xls.nodes.hypernode.io'
+      node.vm.hostname = 'xxxxxx-dummy-magweb-vgr.nodes.hypernode.io'
       node.vm.network :private_network, ip: '192.168.33.100'
       node.hostmanager.aliases = %w(example.hypernode.local hypernode-alias)
     end
