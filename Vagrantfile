@@ -4,6 +4,7 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
 
@@ -24,7 +25,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.hostmanager.ignore_private_ip = false
     config.hostmanager.include_offline = true
     config.vm.define 'hypernode' do |node|
-      node.vm.hostname = 'hypernode.local'
+      node.vm.hostname = 'xxxxxx-dummy-magweb-vgr.nodes.hypernode.local'
       node.vm.network :private_network, ip: '192.168.33.100'
       node.hostmanager.aliases = %w(example.hypernode.local hypernode-alias)
     end
