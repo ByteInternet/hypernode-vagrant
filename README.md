@@ -48,8 +48,8 @@ Host hypernode.local
 MySQL is available at hostname hypernode.local, port 3306 or at hostname localhost, port 3307.
 
 ```bash
-# find you MySQL password in ~/.my.cnf by loging in to SSH
-# ssh app@hypernode.local cat ~/.my.cnf
+# find you MySQL password in /data/web/.my.cnf by loging in to SSH
+# ssh app@hypernode.local cat /data/web/.my.cnf
 
 mysql -u app --host=hypernode.local -p
 ```
