@@ -16,7 +16,7 @@ vagrant plugin install vagrant-vbguest vagrant-hostmanager
 vagrant up
 ```
 
-Voila! Access your local Hypernode through [http://hypernode.local/](http://hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).
+Voila! Access your local Hypernode through [http://example.hypernode.local/](http://example.hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).
 
 ## Using the test environment
 
@@ -28,30 +28,31 @@ So fire up PHPStorm and edit away locally. Then check out the Hypernode box to s
 
 ### SSH
 
-SSH is available at hostname hypernode.local, port 22 or at hostname localhost, port 2222.
+SSH is available at port 22 on hostname example.hypernode.local, or at port 2222 localhost.
 
 ```bash
-ssh app@hypernode.local
+ssh app@example.hypernode.local
 ```
 
 You can use this config snippet for SSH to ease logging in and then just `ssh hypernode.local`:
 
 ```
 Host hypernode.local
-    Hostname 127.0.0.1
+    Hostname example.hypernode.local
     User app
-    StrictHostKeyChecking no  # because the host key will change over time
+    StrictHostKeyChecking no  
+    # because the host key will change over time
 ```
 
 ### MySQL
 
-MySQL is available at hostname hypernode.local, port 3306 or at hostname localhost, port 3307.
+MySQL is available at hostname example.hypernode.local, port 3306 or at localhost, port 3307.
 
 ```bash
 # find you MySQL password in /data/web/.my.cnf by loging in to SSH
-# ssh app@hypernode.local cat /data/web/.my.cnf
+# ssh app@example.hypernode.local cat /data/web/.my.cnf
 
-mysql -u app --host=hypernode.local -p
+mysql -u app --host=example.hypernode.local -p
 ```
 
 To connect directly from the vagrant directory you can use `vagrant ssh`. This will log you in as the `vagrant` user.
