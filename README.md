@@ -80,3 +80,12 @@ If you want to change these ports, just have a look at the Vagrant file. It is p
 ### ==> default: stdin: is not a tty
 
 This is Vagrant bug [#1673](https://github.com/mitchellh/vagrant/issues/1673) and perfectly harmless.
+
+### The config reloader is not reloading on changes in /data/web/nginx
+
+/data/web/nginx is an NFS mount on your local computer. We use inotify to detect changes in the config files, but NFS is not supporting inotify.
+If you want to use automatic config reloads on nginx config changes, change the vagrant file to not use an nfs mount by uncommenting:
+
+    config.vm.synced_folder "data/web/nginx/", "/data/web/nginx/", owner: "app", group: "app", create: true
+
+And then manually sync your nginx config files to the hypernode vagrant box.
