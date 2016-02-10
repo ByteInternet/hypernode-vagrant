@@ -27,7 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define 'hypernode' do |node|
       node.vm.hostname = 'xxxxxx-dummy-magweb-vgr.nodes.hypernode.local'
       node.vm.network :private_network, ip: '192.168.33.100'
-      node.hostmanager.aliases = %w(example.hypernode.local hypernode-alias)
+      node.hostmanager.aliases = %w(hypernode.local example.hypernode.local hypernode-alias)
     end
   end
 
