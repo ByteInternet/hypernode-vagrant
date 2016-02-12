@@ -1,3 +1,8 @@
+<?php
+    $host_name = gethostname();
+    $host_name_parts = explode("-", $host_name);
+    $ready_name = count($host_name_parts) == 4 ? $host_name_parts[1] : $host_name;
+?>
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -86,7 +91,7 @@
 <body>
 <header>
     <nav class="navbar" role="navigation">
-        <div id="vagrant"><div class="text-center"><h3>test environment</h3></div></div>
+        <div id="vagrant"><div class="text-center"><h3>test environment for <?php echo $ready_name; ?></h3></div></div>
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">

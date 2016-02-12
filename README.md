@@ -16,7 +16,7 @@ vagrant plugin install vagrant-vbguest vagrant-hostmanager
 vagrant up
 ```
 
-Voila! Access your local Hypernode through [http://example.hypernode.local/](http://example.hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).
+Voila! Access your local Hypernode through [http://hypernode.local/](http://hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).
 
 ## Using the test environment
 
@@ -28,17 +28,17 @@ So fire up PHPStorm and edit away locally. Then check out the Hypernode box to s
 
 ### SSH
 
-SSH is available at port 22 on hostname example.hypernode.local, or at port 2222 localhost.
+SSH is available at port 22 on hostname hypernode.local, or at port 2222 localhost.
 
 ```bash
-ssh app@example.hypernode.local
+ssh app@hypernode.local
 ```
 
 You can use this config snippet for SSH to ease logging in and then just `ssh hypernode.local`:
 
 ```
 Host hypernode.local
-    Hostname example.hypernode.local
+    Hostname hypernode.local
     User app
     StrictHostKeyChecking no  
     # because the host key will change over time
@@ -46,13 +46,13 @@ Host hypernode.local
 
 ### MySQL
 
-MySQL is available at hostname example.hypernode.local, port 3306 or at localhost, port 3307.
+MySQL is available at hostname hypernode.local, port 3306 or at localhost, port 3307.
 
 ```bash
 # find you MySQL password in /data/web/.my.cnf by loging in to SSH
-# ssh app@example.hypernode.local cat /data/web/.my.cnf
+# ssh app@hypernode.local cat /data/web/.my.cnf
 
-mysql -u app --host=example.hypernode.local -p
+mysql -u app --host=hypernode.local -p
 ```
 
 To connect directly from the vagrant directory you can use `vagrant ssh`. This will log you in as the `vagrant` user.
@@ -73,7 +73,39 @@ vagrant up
 
 You might have some ports already in use. Hypernode by default forwards ports 2222 to 22, 3307 to 3306 and 8080 to 80.
 
+Collisions will be automatically resolved, Vagrant will print the newly assigned ports if that happens.
+
 If you want to change these ports, just have a look at the Vagrant file. It is pretty self-explanatory.
+
+## Running multiple hypernode-vagrant boxes at the same time
+If you have two checkouts of this repository or have copied this Vagrantfile to multiple projects, you can run them simultaneously. 
+Some things to keep in mind:
+
+1. The static aliases (hypernode.local, hypernode-alias) will point to the
+box that was booted last.
+
+2. Aliases are created based on the name of the directory the Vagrantfile
+is in. If the dir name is 'hypernode-vagrant' the parent directory name
+will be used. You can override this name with an environment variable
+
+```
+HYPERNODE_VAGRANT_NAME="mywebshop" vagrant up
+```
+
+You can access the node on
+```
+http://mywebshop.hypernode.local
+```
+
+3. If there are two hypernode-vagrants running with the same name, you can still access them both using the alias derived from the path name. The hash based on the Vagrantfile's directory path is always unique because there can only be one Vagrantfile per directory.
+
+```
+http://b033d-mywebshop-magweb-vgr.nodes.hypernode.local
+http://eb7b8-mywebshop-magweb-vgr.nodes.hypernode.local
+```
+
+For the defined aliases check ```/etc/hosts``` on Unix based systems
+(Linux, Mac). On Windows see ```C:\Windows\System32\drivers\etc\hosts```.
 
 ## Troubleshooting
 
@@ -89,3 +121,26 @@ If you want to use automatic config reloads on nginx config changes, change the 
     config.vm.synced_folder "data/web/nginx/", "/data/web/nginx/", owner: "app", group: "app", create: true
 
 And then manually sync your nginx config files to the hypernode vagrant box.
+
+### The web pages don't change
+
+Varnish is enabled by default. To check if this is what is causing your pages to remain static try clearing the cache.
+
+```
+# this clears the entire varnish cache (warning: makes things slow until cache is filled up again)
+varnishadm "ban req.url ~ /"
+```
+
+To completely disable Varnish caching
+```
+# Create a vcl that tells Varnish to cache nothing
+echo -e 'backend default {\n  .host = "127.0.0.1";\n  .port = "8080";\n}\nsub vcl_recv {\n  return(pass);\n}' > /data/web/disabled_caching.vcl
+
+# Compile the vcl
+varnishadm vcl.load nocache /data/web/disabled_caching.vcl
+
+# Load the vcl
+varnishadm vcl.use nocache
+```
+
+For more information about Varnish on Hypernode see [this knowledgebase article](https://support.hypernode.com/knowledgebase/varnish-on-hypernode/).
