@@ -22,3 +22,8 @@ EOF
 ln -s /var/lib/varnish/xxxxx-dummytag-vagrant.nodes.hypernode.io/ "/var/lib/varnish/`hostname`"
 
 rm -rf /etc/cron.d/hypernode-fpm-monitor
+
+# Copy default nginx configs to synced nginx directory if the files don't exist
+if [ -d /etc/hypernode/defaults/nginx/ ]; then
+	su app -c 'find /etc/hypernode/defaults/nginx -type f | xargs -I {} cp -n {} /data/web/nginx/'
+fi
