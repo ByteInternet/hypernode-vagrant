@@ -144,3 +144,25 @@ varnishadm vcl.use nocache
 ```
 
 For more information about Varnish on Hypernode see [this knowledgebase article](https://support.hypernode.com/knowledgebase/varnish-on-hypernode/).
+
+### Transfer closed with x bytes remaining to read
+
+Sometimes there is a connection error while downloading or upgrading the vagrant box. 
+
+```
+http://vagrant.hypernode.com/hypernode.vagrant.release-2653.box
+An error occurred while downloading the remote file. The error
+message, if any, is reproduced below. Please fix this error and try
+again.
+
+transfer closed with 675809792 bytes remaining to read
+```
+
+If you get this error you can continue the interrupted download with ```vagrant box update```
+```
+==> hypernode: Box download is resuming from prior download progress
+    hypernode: Calculating and comparing box checksum...
+==> hypernode: Successfully added box 'hypernode' (v2653) for 'virtualbox'!
+```
+
+You can now run ```vagrant up``` again.
