@@ -151,18 +151,14 @@ Sometimes there is a connection error while downloading or upgrading the vagrant
 
 ```
 http://vagrant.hypernode.com/hypernode.vagrant.release-2653.box
-An error occurred while downloading the remote file. The error
-message, if any, is reproduced below. Please fix this error and try
-again.
+An error occurred while downloading the remote file. The error message, if any, is reproduced below. Please fix this error and try again.
 
 transfer closed with 675809792 bytes remaining to read
 ```
 
-If you get this error you can continue the interrupted download with ```vagrant box update```
+If you get this error you can continue the interrupted download with another ```vagrant up``` (or a ```vagrant box update``` if you have already installed a previous version of the box)
 ```
+==> hypernode: Adding box 'hypernode' (v2653) for provider: virtualbox
+    hypernode: Downloading: http://vagrant.hypernode.com/hypernode.vagrant.release-2653.box
 ==> hypernode: Box download is resuming from prior download progress
-    hypernode: Calculating and comparing box checksum...
-==> hypernode: Successfully added box 'hypernode' (v2653) for 'virtualbox'!
 ```
-
-You can now run ```vagrant up``` again.
