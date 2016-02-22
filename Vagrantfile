@@ -4,6 +4,15 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+# abort if vagrant-vbguest is not installed
+if !Vagrant.has_plugin?("vagrant-vbguest")
+        abort "Please install the 'vagrant-vbguest' module"
+end
+
+# abort if vagrant-hostmanager is not installed
+if !Vagrant.has_plugin?("vagrant-hostmanager")
+        abort "Please install the 'vagrant-hostmanager' module"
+end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
