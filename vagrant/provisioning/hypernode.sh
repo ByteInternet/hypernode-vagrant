@@ -27,3 +27,7 @@ rm -rf /etc/cron.d/hypernode-fpm-monitor
 if [ -d /etc/hypernode/defaults/nginx/ ]; then
 	su app -c 'find /etc/hypernode/defaults/nginx -type f | xargs -I {} cp -n {} /data/web/nginx/'
 fi
+
+echo "Your hypernode-vagrant is ready! Log in with:"
+echo "ssh app@hypernode.local -oStrictHostKeyChecking=no -A"
+echo "Or visit https://$(echo `hostname` | cut -d'-' -f2).hypernode.local in your browser"
