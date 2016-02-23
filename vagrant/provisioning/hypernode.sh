@@ -3,6 +3,8 @@
 
 set -e
 
+truncate -s 0 /var/mail/app
+
 user="app"
 homedir=$(getent passwd $user | cut -d ':' -f6)
 sudo -u $user mkdir -p "$homedir/.ssh"
