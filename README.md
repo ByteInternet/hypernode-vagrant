@@ -134,7 +134,7 @@ varnishadm "ban req.url ~ /"
 To completely disable Varnish caching
 ```
 # Create a vcl that tells Varnish to cache nothing
-echo -e 'backend default {\n  .host = "127.0.0.1";\n  .port = "8080";\n}\nsub vcl_recv {\n  return(pass);\n}' > /data/web/disabled_caching.vcl
+echo -e 'vcl 4.0;\nbackend default {\n  .host = "127.0.0.1";\n  .port = "8080";\n}\nsub vcl_recv {\n  return(pass);\n}' > /data/web/disabled_caching.vcl
 
 # Compile the vcl
 varnishadm vcl.load nocache /data/web/disabled_caching.vcl
