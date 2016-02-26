@@ -58,6 +58,12 @@ mysql -u app --host=hypernode.local -p
 To connect directly from the vagrant directory you can use `vagrant ssh`. This will log you in as the `vagrant` user.
 This will allow you to use `sudo` and manage the server. Do not use this for normal operation, however, the app user should be used for normal usage and as the website user.
 
+### Mail
+
+All mail is redirected a [MailHog](https://github.com/mailhog/MailHog) running locally. Access MailHog at [http://b033d.hypernode.local:8025] \(replace name with your instance's hostname\).
+
+
+
 ## Keeping up to date with Hypernode versions
 
 With every Hypernode release, we'll update the Hypernode vagrant image as well. Use the following to update your box (you'll lose your MySQL data unless you make a mysqldump first!):
