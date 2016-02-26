@@ -60,7 +60,7 @@ This will allow you to use `sudo` and manage the server. Do not use this for nor
 
 ### Mail
 
-All mail is redirected a [MailHog](https://github.com/mailhog/MailHog) running locally. Access MailHog at http://b033d.hypernode.local:8025 \(replace name with your instance's hostname\).
+All mail is redirected to a local [MailHog](https://github.com/mailhog/MailHog) instance. Access MailHog at http://b033d.hypernode.local:8025 \(replace name with your instance's hostname\).
 
 ![Mail is routed to MailHog](https://raw.githubusercontent.com/ByteInternet/hypernode-vagrant/12f11242e4ed66631ee2dc4e44390b3f62c27932/Documentation/mailhog.png "MailHog impression")
 
