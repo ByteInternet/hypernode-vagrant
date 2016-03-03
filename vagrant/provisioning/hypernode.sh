@@ -13,7 +13,8 @@ chmod 700 "$homedir/.ssh"
 chmod 600 "$homedir/.ssh/authorized_keys"
 
 if ssh-add -L >/dev/null 2>/dev/null; then
-    ssh-add -L >> $homedir/.ssh/authorized_keys;
+    combined=$(ssh-add -L | awk '!NF || !seen[$0]++' "$homedir/.ssh/authorized_keys" -)
+    echo "$combined" > "$homedir/.ssh/authorized_keys"
 fi
 
 cat << EOF >> $homedir/.ssh/authorized_keys
@@ -21,6 +22,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDSERHiEjdibIowB763wgGn4OCdko4b8WfqmgihgiIs
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key
 EOF
 
+rm -f "/var/lib/varnish/`hostname`"
 ln -s /var/lib/varnish/xxxxx-dummytag-vagrant.nodes.hypernode.io/ "/var/lib/varnish/`hostname`"
 
 rm -rf /etc/cron.d/hypernode-fpm-monitor
