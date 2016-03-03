@@ -1,5 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
+require 'fileutils'
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
@@ -14,6 +16,12 @@ if !Vagrant.has_plugin?("vagrant-hostmanager")
         abort "Please install the 'vagrant-hostmanager' module"
 end
 
+# source local config
+unless File.exist?('local.yml')
+    FileUtils.cp('local.example.yml', 'local.yml')
+end
+settings = YAML.load_file 'local.yml'
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
 
@@ -24,8 +32,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
   config.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
 
-  config.vm.synced_folder "data/web/public/", "/data/web/public/", owner: "app", group: "app", create: true
-  config.vm.synced_folder "data/web/nginx/", "/data/web/nginx/", owner: "app", group: "app", create: true
+  config.vm.synced_folder settings['fs']['magento_dir']['host'], settings['fs']['magento_dir']['guest'], owner: "app", group: "app", create: true
+  config.vm.synced_folder settings['fs']['nginx_dir']['host'], settings['fs']['nginx_dir']['guest'], owner: "app", group: "app", create: true
 
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
 
