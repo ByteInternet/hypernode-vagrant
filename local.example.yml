@@ -1,7 +1,9 @@
 fs:
-  magento_dir:
-    host: data/web/public/
-    guest: /data/web/public/
-  nginx_dir:
-    host: data/web/nginx/
-    guest: /data/web/nginx/
+  type: virtualbox
+  folders:
+    magento:
+      host: data/web/public/
+      guest: /data/web/public/
+    nginx:
+      host: data/web/nginx/
+      guest: /data/web/nginx/
