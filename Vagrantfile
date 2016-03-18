@@ -36,8 +36,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
   config.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
 
-  settings['fs']['folders'].each do |name, folder|
-    config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
+  if !settings['fs']['folders'].nil?
+    settings['fs']['folders'].each do |name, folder|
+      config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
+    end
   end
 
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
