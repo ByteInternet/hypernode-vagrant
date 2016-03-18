@@ -44,6 +44,22 @@ Host hypernode.local
     # because the host key will change over time
 ```
 
+### PHP version
+
+The default php version is 5.5. To boot a hypernode-vagrant box with php 7.0 edit the local.yml file.
+
+Change local.yml to:
+```bash
+php:
+  version: 7.0
+```
+
+Destroy and re-create the box
+```bash
+vagrant destroy -f
+vagrant up --provider virtualbox
+```
+
 ### MySQL
 
 MySQL is available at hostname hypernode.local, port 3306 or at localhost, port 3307.
