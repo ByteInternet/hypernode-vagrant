@@ -5,3 +5,5 @@ fs:
   nginx_dir:
     host: data/web/nginx/
     guest: /data/web/nginx/
+php:
+  version: 5.5

@@ -3,6 +3,19 @@
 require 'yaml'
 require 'fileutils'
 
+# source local config
+unless File.exist?('local.yml')
+    FileUtils.cp('local.example.yml', 'local.yml')
+end
+settings = YAML.load_file 'local.yml'
+
+php_version = ENV['HYPERNODE_VAGRANT_PHP_VERSION'] ? ENV['HYPERNODE_VAGRANT_PHP_VERSION'] : settings['php']['version']
+
+available_php_versions = [5.5, 7.0]
+unless available_php_versions.include?(php_version)
+        abort "Configure an available php version in local.yml: #{available_php_versions.join(', ')}. You specified: #{php_version}"
+end
+
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
@@ -16,17 +29,19 @@ if !Vagrant.has_plugin?("vagrant-hostmanager")
         abort "Please install the 'vagrant-hostmanager' module"
 end
 
-# source local config
-unless File.exist?('local.yml')
-    FileUtils.cp('local.example.yml', 'local.yml')
-end
-settings = YAML.load_file 'local.yml'
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
 
   config.vm.box = "hypernode"
   config.vm.box_url = "http://vagrant.hypernode.com/catalog.json"
+
+  if php_version == 7.0
+    config.vm.box = 'hypernode_php7'
+    config.vm.box_url = 'http://vagrant.hypernode.com/customer/php7/catalog.json'
+  else
+    config.vm.box = 'hypernode_php5'
+    config.vm.box_url = 'http://vagrant.hypernode.com/customer/php5/catalog.json'
+  end
 
   config.vm.network "private_network", type: "dhcp"
   config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
