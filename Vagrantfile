@@ -19,16 +19,23 @@ end
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+# paths to local settings file
+SETTINGS_FILE = "local.yml"
+SETTINGS_EXAMPLES_FILE = "local.example.yml"
+
 # abort if vagrant-hostmanager is not installed
 if !Vagrant.has_plugin?("vagrant-hostmanager")
   abort "Please install the 'vagrant-hostmanager' module"
 end
 
+# source local config
+unless File.exist?(SETTINGS_FILE)
+  FileUtils.cp(SETTINGS_EXAMPLES_FILE, SETTINGS_FILE)
+end
+settings = YAML.load_file SETTINGS_FILE
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
-
-  config.vm.box = "hypernode"
-  config.vm.box_url = "http://vagrant.hypernode.com/catalog.json"
 
   if php_version == 7.0
     config.vm.box = 'hypernode_php7'
@@ -42,8 +49,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
   config.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
 
-  config.vm.synced_folder settings['fs']['magento_dir']['host'], settings['fs']['magento_dir']['guest'], owner: "app", group: "app", create: true
-  config.vm.synced_folder settings['fs']['nginx_dir']['host'], settings['fs']['nginx_dir']['guest'], owner: "app", group: "app", create: true
+  if !settings['fs']['folders'].nil?
+    settings['fs']['folders'].each do |name, folder|
+      config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
+    end
+  end
 
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
 
