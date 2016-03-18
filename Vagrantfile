@@ -19,14 +19,9 @@ end
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-# abort if vagrant-vbguest is not installed
-if !Vagrant.has_plugin?("vagrant-vbguest")
-        abort "Please install the 'vagrant-vbguest' module"
-end
-
 # abort if vagrant-hostmanager is not installed
 if !Vagrant.has_plugin?("vagrant-hostmanager")
-        abort "Please install the 'vagrant-hostmanager' module"
+  abort "Please install the 'vagrant-hostmanager' module"
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -51,6 +46,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder settings['fs']['nginx_dir']['host'], settings['fs']['nginx_dir']['guest'], owner: "app", group: "app", create: true
 
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
+
+  config.vm.provider :virtualbox do |vbox, override|
+    # abort if vagrant-vbguest is not installed
+    if !Vagrant.has_plugin?("vagrant-vbguest")
+            abort "Please install the 'vagrant-vbguest' module"
+    end
+    vbox.memory = 1024
+  end
+
+  config.vm.provider :lxc do |lxc, override|
+    lxc.customize 'cgroup.memory.limit_in_bytes', '1024M'
+  end
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
