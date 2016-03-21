@@ -9,7 +9,10 @@ unless File.exist?('local.yml')
 end
 settings = YAML.load_file 'local.yml'
 
-php_version = ENV['HYPERNODE_VAGRANT_PHP_VERSION'] ? ENV['HYPERNODE_VAGRANT_PHP_VERSION'] : settings['php']['version']
+if settings['php'].nil? or settings['php']['version'].nil?
+    settings_php_version = 5.5
+end
+php_version = ENV['HYPERNODE_VAGRANT_PHP_VERSION'] ? ENV['HYPERNODE_VAGRANT_PHP_VERSION'] : settings_php_version
 
 available_php_versions = [5.5, 7.0]
 unless available_php_versions.include?(php_version)
