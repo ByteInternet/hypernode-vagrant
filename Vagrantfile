@@ -11,6 +11,8 @@ settings = YAML.load_file 'local.yml'
 
 if settings['php'].nil? or settings['php']['version'].nil?
     settings_php_version = 5.5
+else
+    settings_php_version = settings['php']['version']
 end
 php_version = ENV['HYPERNODE_VAGRANT_PHP_VERSION'] ? ENV['HYPERNODE_VAGRANT_PHP_VERSION'] : settings_php_version
 
