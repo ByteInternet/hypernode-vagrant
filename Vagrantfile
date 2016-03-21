@@ -45,10 +45,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box_url = 'http://vagrant.hypernode.com/customer/php5/catalog.json'
   end
 
-  config.vm.network "private_network", type: "dhcp"
-  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
-  config.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
-
   if !settings['fs']['folders'].nil?
     settings['fs']['folders'].each do |name, folder|
       config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
@@ -58,6 +54,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
 
   config.vm.provider :virtualbox do |vbox, override|
+    vbox.vm.network "private_network", type: "dhcp"
+    vbox.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+    vbox.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
     vbox.memory = 2048
   end
 
