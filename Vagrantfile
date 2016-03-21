@@ -52,7 +52,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   if !settings['fs']['folders'].nil?
     settings['fs']['folders'].each do |name, folder|
-      config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
+      if settings['fs']['type'] == 'nfs'
+          config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
+      else
+          config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
+      end
     end
   end
 
