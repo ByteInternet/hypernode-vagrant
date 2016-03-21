@@ -22,6 +22,13 @@ vagrant up --provider virtualbox
 ```
 
 Virtualbox can be rather slow. In case you are on Linux you can also use LXC instead.
+
+Change the synced folder type in local.yml to something other than virtualbox like rsync or nfs:
+```
+fs:
+  type: rsync
+```
+
 ```
 vagrant plugin install vagrant-lxc
 vagrant up --provider lxc
