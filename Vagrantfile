@@ -58,15 +58,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
 
   config.vm.provider :virtualbox do |vbox, override|
-    # abort if vagrant-vbguest is not installed
-    if !Vagrant.has_plugin?("vagrant-vbguest")
-            abort "Please install the 'vagrant-vbguest' module"
-    end
-    vbox.memory = 1024
+    vbox.memory = 2048
   end
 
   config.vm.provider :lxc do |lxc, override|
-    lxc.customize 'cgroup.memory.limit_in_bytes', '1024M'
+    lxc.customize 'cgroup.memory.limit_in_bytes', '2048M'
   end
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
