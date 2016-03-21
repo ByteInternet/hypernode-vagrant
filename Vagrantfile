@@ -63,9 +63,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
 
   config.vm.provider :virtualbox do |vbox, override|
-    vbox.vm.network "private_network", type: "dhcp"
-    vbox.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
-    vbox.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
+    override.vm.network "private_network", type: "dhcp"
+    override.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+    override.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
     vbox.memory = 2048
   end
 
