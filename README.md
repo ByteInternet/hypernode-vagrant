@@ -4,16 +4,35 @@ You can start developing on your own local Hypernode within 15 minutes.
 
 ## Starting the test environment
 
-1. Install [Virtualbox 4.3.18 or later](https://www.virtualbox.org/wiki/Downloads).
+1. Install [Virtualbox 4.3.18 or
+later](https://www.virtualbox.org/wiki/Downloads), or [LXC](https://help.ubuntu.com/lts/serverguide/lxc.html) (experimental).
 2. Install [Vagrant 1.6.4 or later](http://www.vagrantup.com/downloads.html).
 3. Clone this [repository](https://github.com/ByteInternet/hypernode-vagrant.git) using Git or download the [zip file](https://github.com/ByteInternet/hypernode-vagrant/archive/master.zip) from Github.
+
 
 ```
 # check if version > 1.6.4 ?
 vagrant --version 
 cd hypernode-vagrant
-vagrant plugin install vagrant-vbguest vagrant-hostmanager
-vagrant up
+vagrant plugin install vagrant-hostmanager
+```
+
+```
+vagrant plugin install vagrant-vbguest
+vagrant up --provider virtualbox
+```
+
+Virtualbox can be rather slow. In case you are on Linux you can also use LXC instead.
+
+Change the synced folder type in local.yml to something other than virtualbox like rsync or nfs:
+```
+fs:
+  type: rsync
+```
+
+```
+vagrant plugin install vagrant-lxc
+vagrant up --provider lxc
 ```
 
 Voila! Access your local Hypernode through [http://hypernode.local/](http://hypernode.local/) or [http://localhost:8080/](http://localhost:8080/).

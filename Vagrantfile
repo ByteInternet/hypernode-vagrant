@@ -28,11 +28,6 @@ VAGRANTFILE_API_VERSION = "2"
 SETTINGS_FILE = "local.yml"
 SETTINGS_EXAMPLES_FILE = "local.example.yml"
 
-# abort if vagrant-vbguest is not installed
-if !Vagrant.has_plugin?("vagrant-vbguest")
-  abort "Please install the 'vagrant-vbguest' module"
-end
-
 # abort if vagrant-hostmanager is not installed
 if !Vagrant.has_plugin?("vagrant-hostmanager")
   abort "Please install the 'vagrant-hostmanager' module"
@@ -55,10 +50,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box_url = 'http://vagrant.hypernode.com/customer/php5/catalog.json'
   end
 
-  config.vm.network "private_network", type: "dhcp"
-  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
-  config.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
-
   if !settings['fs']['folders'].nil?
     settings['fs']['folders'].each do |name, folder|
       if settings['fs']['type'] == 'nfs'
@@ -70,6 +61,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
+
+  config.vm.provider :virtualbox do |vbox, override|
+    override.vm.network "private_network", type: "dhcp"
+    override.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+    override.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
+    vbox.memory = 2048
+  end
+
+  config.vm.provider :lxc do |lxc, override|
+    lxc.customize 'cgroup.memory.limit_in_bytes', '2048M'
+  end
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
@@ -84,7 +86,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
       if vm.communicate.ready?
         result = ""
-        vm.communicate.execute("ifconfig eth1") do |type, data|
+        vm.communicate.execute("ifconfig `find /sys/class/net -name 'eth*' -printf '%f\n' -quit`") do |type, data|
           result << data if type == :stdout
         end
       end
