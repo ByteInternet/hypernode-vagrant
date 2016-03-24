@@ -86,7 +86,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
       if vm.communicate.ready?
         result = ""
-        vm.communicate.execute("ifconfig `find /sys/class/net -name 'eth*' -printf '%f\n' -quit`") do |type, data|
+        vm.communicate.execute("ifconfig `find /sys/class/net -name 'eth*' -printf '%f\n' | tail -n 1`") do |type, data|
           result << data if type == :stdout
         end
       end
