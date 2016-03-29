@@ -3,24 +3,6 @@
 require 'yaml'
 require 'fileutils'
 
-# source local config
-unless File.exist?('local.yml')
-    FileUtils.cp('local.example.yml', 'local.yml')
-end
-settings = YAML.load_file 'local.yml'
-
-if settings['php'].nil? or settings['php']['version'].nil?
-    settings_php_version = 5.5
-else
-    settings_php_version = settings['php']['version']
-end
-php_version = ENV['HYPERNODE_VAGRANT_PHP_VERSION'] ? ENV['HYPERNODE_VAGRANT_PHP_VERSION'] : settings_php_version
-
-available_php_versions = [5.5, 7.0]
-unless available_php_versions.include?(php_version)
-        abort "Configure an available php version in local.yml: #{available_php_versions.join(', ')}. You specified: #{php_version}"
-end
-
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
@@ -28,16 +10,28 @@ VAGRANTFILE_API_VERSION = "2"
 SETTINGS_FILE = "local.yml"
 SETTINGS_EXAMPLES_FILE = "local.example.yml"
 
-# abort if vagrant-hostmanager is not installed
-if !Vagrant.has_plugin?("vagrant-hostmanager")
-  abort "Please install the 'vagrant-hostmanager' module"
-end
-
 # source local config
 unless File.exist?(SETTINGS_FILE)
   FileUtils.cp(SETTINGS_EXAMPLES_FILE, SETTINGS_FILE)
 end
 settings = YAML.load_file SETTINGS_FILE
+
+if settings['php'].nil? or settings['php']['version'].nil?
+  settings_php_version = 5.5
+else
+  settings_php_version = settings['php']['version']
+end
+php_version = ENV['HYPERNODE_VAGRANT_PHP_VERSION'] ? ENV['HYPERNODE_VAGRANT_PHP_VERSION'] : settings_php_version
+
+available_php_versions = [5.5, 7.0]
+unless available_php_versions.include?(php_version)
+  abort "Configure an available php version in local.yml: #{available_php_versions.join(', ')}. You specified: #{php_version}"
+end
+
+# abort if vagrant-hostmanager is not installed
+if !Vagrant.has_plugin?("vagrant-hostmanager")
+  abort "Please install the 'vagrant-hostmanager' module"
+end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
@@ -79,7 +73,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.hostmanager.ignore_private_ip = false
     config.hostmanager.include_offline = true
 
-    # Get the dynamic hostname from the running box so we know what to put in 
+    # Get the dynamic hostname from the running box so we know what to put in
     # /etc/hosts even though we don't specify a static private ip address
     # For more information about why this is necessary see:
     # https://github.com/smdahlen/vagrant-hostmanager/issues/86#issuecomment-183265949
@@ -96,7 +90,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define 'hypernode' do |node|
       # Name the vagrant box after the directory the Vagrantfile is in. If the Vagrantfile
       # is in a directory named 'hypernode-vagrant' assume the name of the parent directory.
-      # This is so there is a human readable difference between multiple test environments. 
+      # This is so there is a human readable difference between multiple test environments.
       working_directory = File.basename(Dir.getwd)
       parent_directory = File.basename(File.expand_path("..", Dir.getwd))
       directory_name = working_directory == "hypernode-vagrant" ? parent_directory : working_directory
@@ -111,13 +105,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # unique alias (well at least semi-unique, there might be some
       # collisions) with the hash of that path.
       require 'digest/sha1'
-      hostname_hash = Digest::SHA1.hexdigest(Dir.pwd).slice(0..5) 
+      hostname_hash = Digest::SHA1.hexdigest(Dir.pwd).slice(0..5)
       directory_hash_alias = hostname_hash + ".hypernode.local"
 
       # set the machine hostname
       node.vm.hostname = hostname_hash + "-" + hypernode_host + "-magweb-vgr.nodes.hypernode.local"
 
-      # Here you can define your own aliases for in the hosts file. 
+      # Here you can define your own aliases for in the hosts file.
       # note: if you have more than one hypernode-vagrant checkout up and
       # running, the static aliases will be defined for all of those boxes.
       # This means that hypernode.local will belong to box you booted as last.
