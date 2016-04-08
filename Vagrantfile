@@ -95,10 +95,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       parent_directory = File.basename(File.expand_path("..", Dir.getwd))
       directory_name = working_directory == "hypernode-vagrant" ? parent_directory : working_directory
       hypernode_vagrant_name = ENV['HYPERNODE_VAGRANT_NAME'] ? ENV['HYPERNODE_VAGRANT_NAME'] : directory_name
+
+      # remove special characters so we have a valid hostname
       hypernode_host = hypernode_vagrant_name.gsub(/[^a-zA-Z0-9\-]/, "") 
       hypernode_host = hypernode_host.empty? ? 'hypernode' : hypernode_host
 
-      # remove special characters so we have a valid hostname
       directory_alias = hypernode_host + ".hypernode.local"
 
       # The directory and parent directory don't have to be unique names. You
