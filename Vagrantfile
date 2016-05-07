@@ -64,6 +64,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provider :lxc do |lxc, override|
+      if settings['fs']['type'] == 'nfs'
+        # in case of lxc and nfs make sure the app user has the same uid and gid as the host
+        uid = `id -u`.strip()
+        gid = `id -g`.strip()
+        config.vm.provision "shell", path: "vagrant/provisioning/fix_uid_gid_for_lxc_nfs.sh", args: "-u #{uid} -g #{gid}"
+      end
     lxc.customize 'cgroup.memory.limit_in_bytes', '2048M'
   end
 
