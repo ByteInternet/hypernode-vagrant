@@ -61,6 +61,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
     override.vm.network "forwarded_port", guest: 3306, host: 3307, auto_correct: true
     vbox.memory = 2048
+    vbox.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
   end
 
   config.vm.provider :lxc do |lxc, override|
