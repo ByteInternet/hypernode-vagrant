@@ -9,3 +9,7 @@ fs:
       guest: /data/web/nginx/
 php:
   version: 5.5
+hostmanager:
+  extra-aliases:
+    - my-custom-store-url1.local
+    - my-custom-store-url2.local

@@ -121,6 +121,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # running, the static aliases will be defined for all of those boxes.
       # This means that hypernode.local will belong to box you booted as last.
       node.hostmanager.aliases = ["hypernode.local", "hypernode-alias", directory_alias, directory_hash_alias]
+
+      # Add user defined (local.yml) aliases to the hosts file.
+      if !settings['hostmanager'].nil? and !settings['hostmanager']['extra-aliases'].nil?
+        node.hostmanager.aliases += settings['hostmanager']['extra-aliases']
+      end
     end
   end
 end
