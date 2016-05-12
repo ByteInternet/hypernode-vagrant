@@ -130,6 +130,14 @@ box that was booted last.
 is in. If the dir name is 'hypernode-vagrant' the parent directory name
 will be used. You can override this name with an environment variable
 
+3. You can add your own aliases by updating the following section in the local.yml file.
+```bash
+hostmanager:
+  extra-aliases:
+    - my-custom-store-url1.local
+    - my-custom-store-url2.local
+```
+
 ```
 HYPERNODE_VAGRANT_NAME="mywebshop" vagrant up
 ```
