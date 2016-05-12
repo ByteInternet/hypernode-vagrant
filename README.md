@@ -130,14 +130,6 @@ box that was booted last.
 is in. If the dir name is 'hypernode-vagrant' the parent directory name
 will be used. You can override this name with an environment variable
 
-3. You can add your own aliases by updating the following section in the local.yml file.
-```bash
-hostmanager:
-  extra-aliases:
-    - my-custom-store-url1.local
-    - my-custom-store-url2.local
-```
-
 ```
 HYPERNODE_VAGRANT_NAME="mywebshop" vagrant up
 ```
@@ -147,7 +139,19 @@ You can access the node on
 http://mywebshop.hypernode.local
 ```
 
-3. If there are two hypernode-vagrants running with the same name, you can still access them both using the alias derived from the path name. The hash based on the Vagrantfile's directory path is always unique because there can only be one Vagrantfile per directory.
+3. You can add your own aliases by updating the following section in the local.yml file
+```bash
+hostmanager:
+  extra-aliases:
+    - my-custom-store-url1.local
+    - my-custom-store-url2.local
+```
+Apply these settings to a provisioned environment by running the following command inside your Vagrant directory
+```
+vagrant hostmanager
+```
+
+4. If there are two hypernode-vagrants running with the same name, you can still access them both using the alias derived from the path name. The hash based on the Vagrantfile's directory path is always unique because there can only be one Vagrantfile per directory.
 
 ```
 http://b033d-mywebshop-magweb-vgr.nodes.hypernode.local
