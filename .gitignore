@@ -3,4 +3,5 @@
 .idea
 *.swp
 data/web/public/*
+data/web/nginx/*
 local.yml
