@@ -28,6 +28,12 @@ unless available_php_versions.include?(php_version)
   abort "Configure an available php version in local.yml: #{available_php_versions.join(', ')}. You specified: #{php_version}"
 end
 
+if !Vagrant.has_plugin?("vagrant-gatling-rsync") and settings['fs']['type'] == 'rsync'
+  puts "Tip: run 'vagrant plugin install vagrant-gatling-rsync' to speed up \
+shared folder operations.\nYou can then sync with 'vagrant gatling-rsync-auto' \
+instead of 'vagrant rsync-auto' to increase performance"
+end
+
 # abort if vagrant-hostmanager is not installed
 if !Vagrant.has_plugin?("vagrant-hostmanager")
   abort "Please install the 'vagrant-hostmanager' module"
@@ -48,6 +54,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     settings['fs']['folders'].each do |name, folder|
       if settings['fs']['type'] == 'nfs'
           config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
+      elsif settings['fs']['type'] == 'rsync'
+          config.vm.synced_folder folder['host'], folder['guest'], type: 'rsync', create: true, owner: "app", group: "app"
+	  # Configure the window for gatling to coalesce writes.
+	  if Vagrant.has_plugin?("vagrant-gatling-rsync")
+	    config.gatling.latency = 2.5
+	    config.gatling.time_format = "%H:%M:%S"
+	    # Don't automatically sync when machines with rsync folders come up.
+	    # Start syncing by running 'vagrant gatling-rsync-auto'
+	    config.gatling.rsync_on_startup = false
+	  end
       else
           config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
       end
