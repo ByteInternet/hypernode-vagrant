@@ -28,6 +28,16 @@ unless available_php_versions.include?(php_version)
   abort "Configure an available php version in local.yml: #{available_php_versions.join(', ')}. You specified: #{php_version}"
 end
 
+if settings['magento'].nil? or settings['magento']['version'].nil?
+  settings_magento_version = 2
+else
+  settings_magento_version = settings['magento']['version']
+end
+
+if settings['fs']['folders'].select{ |_, f| f['guest'].start_with?('/data/web/public') }.any? and settings['magento']['version'] == 2
+  abort "Can not configure a synced /data/web/public directory with Magento 2, this will be symlinked to /data/web/magento2!"
+end
+
 if !Vagrant.has_plugin?("vagrant-gatling-rsync") and settings['fs']['type'] == 'rsync'
   puts "Tip: run 'vagrant plugin install vagrant-gatling-rsync' to speed up \
 shared folder operations.\nYou can then sync with 'vagrant gatling-rsync-auto' \
@@ -70,7 +80,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh"
+  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{settings_magento_version}"
 
   config.vm.provider :virtualbox do |vbox, override|
     override.vm.network "private_network", type: "dhcp"
