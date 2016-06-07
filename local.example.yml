@@ -15,3 +15,5 @@ hostmanager:
     - my-custom-store-url2.local
 magento:
   version: 2
+varnish:
+  enabled: false
