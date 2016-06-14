@@ -1,7 +1,13 @@
 <?php
-$host_name = gethostname();
-$host_name_parts = explode("-", $host_name);
-$ready_name = count($host_name_parts) == 4 ? $host_name_parts[1] : $host_name;
+const HOST_NAME_DELIMITER = '-';
+const HOST_NAME_EXPECTED_PARTS = 3;
+$host_name = gethostname(); ``
+$host_name_parts = explode(HOST_NAME_DELIMITER, $host_name);
+if (count($host_name_parts) != HOST_NAME_EXPECTED_PARTS) {
+    $ready_name = $host_name_parts[1];
+} else {
+    $ready_name = $host_name;
+}
 
 $mysqlConfig = parse_ini_file('/data/web/.my.cnf', true);
 $redisConfig = parseRedisConf('/etc/redis/redis.conf');
@@ -42,7 +48,7 @@ function getPHPInfoPage(){
 
 if($_GET['info']):
     phpinfo();
-Else:
+else:
     ?>
     <!DOCTYPE html>
     <html>
