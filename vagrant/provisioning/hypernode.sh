@@ -3,6 +3,15 @@
 
 set -e
 
+while getopts "m:v:" opt; do
+    case "$opt" in
+        m)
+            magento_version="$OPTARG" ;;
+        v)
+            varnish_enabled="$OPTARG" ;;
+    esac
+done
+
 truncate -s 0 /var/mail/app
 
 user="app"
@@ -29,8 +38,29 @@ rm -rf /etc/cron.d/hypernode-fpm-monitor
 
 # Copy default nginx configs to synced nginx directory if the files don't exist
 if [ -d /etc/hypernode/defaults/nginx/ ]; then
-	su app -c 'find /etc/hypernode/defaults/nginx -type f | xargs -I {} cp -n {} /data/web/nginx/'
+	find /etc/hypernode/defaults/nginx -type f | sudo -u $user xargs -I {} cp -n {} /data/web/nginx/
 fi
+
+if [ "$magento_version" == "2" ]; then
+	# Create magento 2 nginx flag file
+	sudo -u $user touch /data/web/nginx/magento2.flag
+	# Set correct symlink
+	rm -rf /data/web/public
+	sudo -u $user ln -fs /data/web/magento2/pub /data/web/public
+fi
+
+# ensure varnish is running. in lxc vagrant boxes for some reason the varnish init script in /etc/init.d doesn't bring up the service on boot
+# todo: find out why varnish isn't always started on startup on lxc instances
+ps -ef | grep -v "grep" | grep varnishd -q || (service varnish start && sleep 1)
+
+if ! $varnish_enabled; then
+
+	su $user -c "echo -e 'vcl 4.0;\nbackend default {\n .host = \"127.0.0.1\";\n .port= \"8080\";\n}\nsub vcl_recv {\n return(pass);\n}' > /data/web/disabled_caching.vcl"
+	varnishadm vcl.load nocache /data/web/disabled_caching.vcl
+	varnishadm vcl.use nocache
+fi
+	
+touch "$homedir/.ssh/authorized_keys"
 
 echo "Your hypernode-vagrant is ready! Log in with:"
 echo "ssh app@hypernode.local -oStrictHostKeyChecking=no -A"

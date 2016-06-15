@@ -1,9 +1,9 @@
 fs:
   type: virtualbox
   folders:
-    magento:
-      host: data/web/public/
-      guest: /data/web/public/
+    magento2:
+      host: data/web/magento2
+      guest: /data/web/magento2
     nginx:
       host: data/web/nginx/
       guest: /data/web/nginx/
@@ -13,3 +13,7 @@ hostmanager:
   extra-aliases:
     - my-custom-store-url1.local
     - my-custom-store-url2.local
+magento:
+  version: 2
+varnish:
+  enabled: false
