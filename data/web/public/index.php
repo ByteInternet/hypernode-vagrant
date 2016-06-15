@@ -1,7 +1,7 @@
 <?php
 const HOST_NAME_DELIMITER = '-';
 const HOST_NAME_EXPECTED_PARTS = 3;
-$host_name = gethostname(); ``
+$host_name = gethostname();
 $host_name_parts = explode(HOST_NAME_DELIMITER, $host_name);
 if (count($host_name_parts) != HOST_NAME_EXPECTED_PARTS) {
     $ready_name = $host_name_parts[1];
