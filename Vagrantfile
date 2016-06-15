@@ -40,8 +40,10 @@ else
   settings_varnish_enabled = settings['varnish']['enabled']
 end
 
-if settings['fs']['folders'].select{ |_, f| f['guest'].start_with?('/data/web/public') }.any? and settings['magento']['version'] == 2
-  abort "Can not configure a synced /data/web/public directory with Magento 2, this will be symlinked to /data/web/magento2!"
+if !settings['magento'].nil? and !settings['magento']['version'].nil?
+	if settings['fs']['folders'].select{ |_, f| f['guest'].start_with?('/data/web/public') }.any? and settings['magento']['version'] == 2
+	  abort "Can not configure a synced /data/web/public directory with Magento 2, this will be symlinked to /data/web/magento2!"
+	end
 end
 
 if !Vagrant.has_plugin?("vagrant-gatling-rsync") and settings['fs']['type'] == 'rsync'
