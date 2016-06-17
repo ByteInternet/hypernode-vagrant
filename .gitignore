@@ -4,4 +4,5 @@
 *.swp
 data/web/public/*
 data/web/nginx/*
+data/web/magento2/pub/*
 local.yml

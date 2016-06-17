@@ -47,14 +47,21 @@ if [ "$magento_version" == "2" ]; then
 	# Set correct symlink
 	rm -rf /data/web/public
 	sudo -u $user ln -fs /data/web/magento2/pub /data/web/public
+else
+	sudo -u $user rm -f /data/web/nginx/magento2.flag
 fi
 
 # ensure varnish is running. in lxc vagrant boxes for some reason the varnish init script in /etc/init.d doesn't bring up the service on boot
 # todo: find out why varnish isn't always started on startup on lxc instances
 ps -ef | grep -v "grep" | grep varnishd -q || (service varnish start && sleep 1)
 
-if ! $varnish_enabled; then
+# if the webroot is empty, place our default index.php which shows the settings
+if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; then
+	cp /vagrant/vagrant/resources/index.php /data/web/public/index.php
+	chown app /data/web/public/index.php
+fi
 
+if ! $varnish_enabled; then
 	su $user -c "echo -e 'vcl 4.0;\nbackend default {\n .host = \"127.0.0.1\";\n .port= \"8080\";\n}\nsub vcl_recv {\n return(pass);\n}' > /data/web/disabled_caching.vcl"
 	varnishadm vcl.load nocache /data/web/disabled_caching.vcl
 	varnishadm vcl.use nocache
