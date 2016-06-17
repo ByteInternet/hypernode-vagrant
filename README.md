@@ -50,7 +50,7 @@ So fire up PHPStorm and edit away locally. Then check out the Hypernode box to s
 SSH is available at port 22 on hostname hypernode.local, or at port 2222 localhost.
 
 ```bash
-ssh app@hypernode.local
+ssh app@hypernode.local -oStrictHostKeyChecking=no -oAddressFamily=inet
 ```
 
 You can use this config snippet for SSH to ease logging in and then just `ssh hypernode.local`:
@@ -60,6 +60,7 @@ Host hypernode.local
     Hostname hypernode.local
     User app
     StrictHostKeyChecking no  
+    AddressFamily inet
     # because the host key will change over time
 ```
 
@@ -165,6 +166,17 @@ For the defined aliases check ```/etc/hosts``` on Unix based systems
 ### ==> default: stdin: is not a tty
 
 This is Vagrant bug [#1673](https://github.com/mitchellh/vagrant/issues/1673) and perfectly harmless.
+
+### Logging in with SSH is slow on Mac
+
+Macs try to connect over IPv6 by default, which makes logging in with SSH slow. To make it faster either add `-oAddressFamily=inet` to your ssh command or add "AddressFamily inet" to your ~/.ssh/config file.
+
+```
+MacBook-Air:hypernode-vagrant vdloo$ time ssh app@hypernode.local -A exit
+real	0m5.093s
+MacBook-Air:hypernode-vagrant vdloo$ time ssh app@hypernode.local -oAddressFamily=inet -A exit
+real	0m0.112s
+```
 
 ### The config reloader is not reloading on changes in /data/web/nginx
 
