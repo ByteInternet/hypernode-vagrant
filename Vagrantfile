@@ -138,7 +138,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       hypernode_vagrant_name = ENV['HYPERNODE_VAGRANT_NAME'] ? ENV['HYPERNODE_VAGRANT_NAME'] : directory_name
 
       # remove special characters so we have a valid hostname
-      hypernode_host = hypernode_vagrant_name.gsub(/[^a-zA-Z0-9\-]/, "") 
+      hypernode_host = hypernode_host.split('-')[0]
+      hypernode_host = hypernode_vagrant_name.gsub(/[^a-zA-Z0-9]/, "")
       hypernode_host = hypernode_host.empty? ? 'hypernode' : hypernode_host
 
       directory_alias = hypernode_host + ".hypernode.local"
