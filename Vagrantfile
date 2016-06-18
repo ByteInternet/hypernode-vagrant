@@ -8,14 +8,15 @@ VAGRANTFILE_API_VERSION = "2"
 
 # abort if vagrant-hypconfigmgmt is not installed
 if !Vagrant.has_plugin?("vagrant-hypconfigmgmt")
-  abort "Please install the 'vagrant-hypconfigmgmt' module.\nRun: 'vagrant plugin install vagrant-hypconfigmgmt' first then try again."
+  system("vagrant plugin install vagrant-hypconfigmgmt")
+  abort "Installed the vagrant-hypconfigmgmt.\nFor the next configuration step, please again run: \"vagrant up\""
 end
 
 # paths to local settings file
 SETTINGS_FILE = "local.yml"
 SETTINGS_EXAMPLES_FILE = "local.example.yml"
 
-# source local config
+# copy base settings
 unless File.exist?(SETTINGS_FILE)
   FileUtils.cp(SETTINGS_EXAMPLES_FILE, SETTINGS_FILE)
 end
@@ -32,6 +33,9 @@ instead of 'vagrant rsync-auto' to increase performance"
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # run hypernode-vagrant configuration wizard if needed during 'vagrant up'
+  config.hypconfigmgmt.enabled = true  
+
   config.ssh.forward_agent = true
 
   if php_version == 7.0
