@@ -6,6 +6,11 @@ require 'fileutils'
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+# abort if vagrant-hypconfigmgmt is not installed
+if !Vagrant.has_plugin?("vagrant-hypconfigmgmt")
+  abort "Please install the 'vagrant-hypconfigmgmt' module.\nRun: 'vagrant plugin install vagrant-hypconfigmgmt' first then try again."
+end
+
 # paths to local settings file
 SETTINGS_FILE = "local.yml"
 SETTINGS_EXAMPLES_FILE = "local.example.yml"
@@ -16,45 +21,14 @@ unless File.exist?(SETTINGS_FILE)
 end
 settings = YAML.load_file SETTINGS_FILE
 
-if settings['php'].nil? or settings['php']['version'].nil?
-  settings_php_version = 5.5
-else
-  settings_php_version = settings['php']['version']
-end
-php_version = ENV['HYPERNODE_VAGRANT_PHP_VERSION'] ? ENV['HYPERNODE_VAGRANT_PHP_VERSION'] : settings_php_version
-
-available_php_versions = [5.5, 7.0]
-unless available_php_versions.include?(php_version)
-  abort "Configure an available php version in local.yml: #{available_php_versions.join(', ')}. You specified: #{php_version}"
-end
-
-if settings['magento'].nil? or settings['magento']['version'].nil?
-  settings_magento_version = 2
-else
-  settings_magento_version = settings['magento']['version']
-end
-
-if settings['varnish'].nil? or settings['varnish']['enabled'].nil?
-  settings_varnish_enabled = false
-else
-  settings_varnish_enabled = settings['varnish']['enabled']
-end
-
-if !settings['magento'].nil? and !settings['magento']['version'].nil?
-	if settings['fs']['folders'].select{ |_, f| f['guest'].start_with?('/data/web/public') }.any? and settings['magento']['version'] == 2
-	  abort "Can not configure a synced /data/web/public directory with Magento 2, this will be symlinked to /data/web/magento2!"
-	end
-end
+php_version = (settings['php'].nil? || settings['php']['version'].nil?) ? '' : settings['php']['version']
+magento_version = (settings['magento'].nil? || settings['magento']['version'].nil?) ? '' : settings['magento']['version']
+varnish_enabled = (settings['varnish'].nil? or settings['varnish']['enabled'].nil?) ? '' : settings['varnish']['enabled']
 
 if !Vagrant.has_plugin?("vagrant-gatling-rsync") and settings['fs']['type'] == 'rsync'
   puts "Tip: run 'vagrant plugin install vagrant-gatling-rsync' to speed up \
 shared folder operations.\nYou can then sync with 'vagrant gatling-rsync-auto' \
 instead of 'vagrant rsync-auto' to increase performance"
-end
-
-# abort if vagrant-hostmanager is not installed
-if !Vagrant.has_plugin?("vagrant-hostmanager")
-  abort "Please install the 'vagrant-hostmanager' module"
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -88,7 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{settings_magento_version} -v #{settings_varnish_enabled}"
+  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{magento_version} -v #{varnish_enabled}"
 
   config.vm.provider :virtualbox do |vbox, override|
     override.vm.network "private_network", type: "dhcp"
