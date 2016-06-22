@@ -1,5 +1,4 @@
 fs:
-  type: virtualbox
   folders:
     magento2:
       host: data/web/magento2

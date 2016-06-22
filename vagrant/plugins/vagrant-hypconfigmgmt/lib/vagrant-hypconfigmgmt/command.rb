@@ -8,7 +8,15 @@ DEFAULT_PHP_VERSION = 7.0
 AVAILABLE_PHP_VERSIONS = [5.5, 7.0]
 
 DEFAULT_VARNISH_STATE = false
-AVAILABLE_VARNISH_STATES = [true, false]
+DEFAULT_FIREWALL_STATE = true
+
+# filesystem types that need to have the firewall disabled in the guest
+# because they otherwise can cause problems
+FIREWALL_INCOMPATIBLE_FS_TYPES = ['nfs_guest']
+
+# This is the only one that works on all platforms.
+# Perhaps we should consider using a different default on different platforms.
+DEFAULT_FS_TYPE = 'virtualbox'
 
 # paths to local settings file
 H_V_SETTINGS_FILE = "local.yml"
@@ -52,6 +60,23 @@ def get_varnish_state(env)
 end
 
 
+def get_firewall_state(env)
+  input = env[:ui].ask("Do you want to enable the production-like firewall? Enter true or false [default #{DEFAULT_FIREWALL_STATE}]: ")
+  firewall_state = use_default_if_input_empty(input, DEFAULT_FIREWALL_STATE)
+
+  case firewall_state
+    when "true"
+      env[:ui].info("The firewall will be enabled.")
+    when "false"
+      env[:ui].info("The firewall will be disabled")
+    else
+      env[:ui].error("The value #{firewall_state} is not a valid value. Please enter true or false")
+      return get_firewall_state(env)
+  end
+  return firewall_state == "true" ? true : false
+end
+
+
 def get_magento_version(env)
   available_versions = AVAILABLE_MAGENTO_VERSIONS.join(' or ')
   input = env[:ui].ask("Is this a Magento #{available_versions} Hypernode? [default #{DEFAULT_MAGENTO_VERSION}]: ")
@@ -86,6 +111,56 @@ def get_php_version(env)
       return get_php_version(env)
   end
   return php_version.to_f
+end
+
+
+def get_fs_type(env)
+  input = env[:ui].ask("What filesystem type do you want to use? Options: nfs_guest, nfs, rsync, virtualbox [default virtualbox]: ")
+  fs_type = use_default_if_input_empty(input, DEFAULT_FS_TYPE)
+  case fs_type
+    when "nfs"
+      env[:ui].info("The guest will mount NFS folders served by the host.")
+    when "nfs_guest"
+      env[:ui].info("The host will mount NFS folders served by the guest")
+    when "virtualbox"
+      env[:ui].info("Virtualbox is the default fs type. If you later want to try a faster fs type like nfs_guest, edit local.yml")
+    when "rsync"
+      env[:ui].info("Will use rsync to sync the folders. Don't forget to start the filesync with 'vagrant rsync-auto' or 'vagrant gatling-rsync-auto'!")
+    else
+      env[:ui].info("Unknown filesystem type. If it's valid for Vagrant then there is no problem. Otherwise you can edit local.yml to change it.")
+  end
+  return fs_type
+end
+
+
+def ensure_fs_type_configured(env)
+  settings = retrieve_settings()
+  if settings['fs']['type'].nil?
+    settings['fs']['type'] = get_fs_type(env)
+  end
+  update_settings(settings)
+end
+
+
+def ensure_firewall_disabled_for_incompatible_fs_types(env)
+  settings = retrieve_settings()
+  if FIREWALL_INCOMPATIBLE_FS_TYPES.include?(settings['fs']['type'])
+    env[:ui].info("Disabling the firewall in the guest because nfs_guest can run into some problems otherwise.")
+    settings['firewall']['enabled'] = false
+  end
+  update_settings(settings)
+end
+
+
+def ensure_firewall_state_configured(env)
+  settings = retrieve_settings()
+  if settings['firewall']['enabled'].nil?
+    settings['firewall']['enabled'] = get_firewall_state(env)
+  elsif ![true, false].include?(settings['firewall']['enabled'])
+    env[:ui].error("The firewall state configured in local.yml is invalid.")
+    settings['firewall']['enabled'] = get_firewall_state(env)
+  end
+  update_settings(settings)
 end
 
 
@@ -185,25 +260,57 @@ def validate_magento2_root(env)
     end
   end
 end
-  
+
+
+def configure_magento(env)
+  ensure_setting_exists('magento')
+  ensure_magento_version_configured(env)
+end
+
+
+def configure_php(env)
+  ensure_setting_exists('php')
+  ensure_php_version_configured(env)
+end
+
+
+def configure_varnish(env)
+  ensure_setting_exists('varnish')
+  ensure_varnish_state_configured(env)
+end
+
+
+def configure_synced_folders(env)
+  ensure_setting_exists('firewall')
+  ensure_setting_exists('fs')
+  ensure_fs_type_configured(env)
+  ensure_firewall_disabled_for_incompatible_fs_types(env)
+  ensure_firewall_state_configured(env)
+  ensure_magento_mounts_configured(env)
+  validate_magento2_root(env)
+end
+
 
 def ensure_settings_configured(env)
   old_settings = retrieve_settings()
-  ensure_setting_exists('magento')
-  ensure_magento_version_configured(env)
-  ensure_setting_exists('php')
-  ensure_php_version_configured(env)
-  ensure_setting_exists('varnish')
-  ensure_varnish_state_configured(env)
-  ensure_magento_mounts_configured(env)
-  validate_magento2_root(env)
+  configure_magento(env)
+  configure_php(env)
+  configure_varnish(env)
+  configure_synced_folders(env)
   new_settings = retrieve_settings()
   return new_settings.to_yaml != old_settings.to_yaml
 end
 
 
 def ensure_required_plugins_are_installed(env)
-  RECOMMENDED_PLUGINS.each do |plugin|
+  required_plugins = RECOMMENDED_PLUGINS
+
+  settings = retrieve_settings()
+  if settings['fs']['type'] == 'nfs_guest'
+     required_plugins << 'vagrant-nfs_guest'
+  end
+  
+  required_plugins.each do |plugin|
     unless Vagrant.has_plugin?(plugin)
       env[:ui].info("Installing the #{plugin} plugin.")
       system("vagrant plugin install #{plugin}")
@@ -220,6 +327,7 @@ module VagrantHypconfigmgmt
       @env = env
     end
 
+    # prompt for missing settings in local.yml. complain if there are invalid settings.
     def call(env)
       if env[:machine].config.hypconfigmgmt.enabled
         changed = ensure_settings_configured(env)

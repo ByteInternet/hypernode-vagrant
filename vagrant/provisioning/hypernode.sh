@@ -3,12 +3,14 @@
 
 set -e
 
-while getopts "m:v:" opt; do
+while getopts "m:v:f:" opt; do
     case "$opt" in
         m)
             magento_version="$OPTARG" ;;
         v)
             varnish_enabled="$OPTARG" ;;
+        f)
+            firewall_enabled="$OPTARG" ;;
     esac
 done
 
@@ -65,6 +67,11 @@ if ! $varnish_enabled; then
 	su $user -c "echo -e 'vcl 4.0;\nbackend default {\n .host = \"127.0.0.1\";\n .port= \"8080\";\n}\nsub vcl_recv {\n return(pass);\n}' > /data/web/disabled_caching.vcl"
 	varnishadm vcl.load nocache /data/web/disabled_caching.vcl
 	varnishadm vcl.use nocache
+fi
+
+# ufw is disabled by default in the box with an upstart override because otherwise mounting dirs with nfs_guest can fail
+if $firewall_enabled; then
+	rm -f /etc/init/ufw.override
 fi
 	
 touch "$homedir/.ssh/authorized_keys"

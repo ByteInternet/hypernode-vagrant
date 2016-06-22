@@ -25,6 +25,7 @@ settings = YAML.load_file SETTINGS_FILE
 php_version = (settings['php'].nil? || settings['php']['version'].nil?) ? '' : settings['php']['version']
 magento_version = (settings['magento'].nil? || settings['magento']['version'].nil?) ? '' : settings['magento']['version']
 varnish_enabled = (settings['varnish'].nil? or settings['varnish']['enabled'].nil?) ? '' : settings['varnish']['enabled']
+firewall_enabled = (settings['firewall'].nil? or settings['firewall']['enabled'].nil?) ? '' : settings['firewall']['enabled']
 
 if !Vagrant.has_plugin?("vagrant-gatling-rsync") and settings['fs']['type'] == 'rsync'
   puts "Tip: run 'vagrant plugin install vagrant-gatling-rsync' to speed up \
@@ -46,27 +47,37 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box_url = 'http://vagrant.hypernode.com/customer/php5/catalog.json'
   end
 
-  if !settings['fs']['folders'].nil?
-    settings['fs']['folders'].each do |name, folder|
-      if settings['fs']['type'] == 'nfs'
-          config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
-      elsif settings['fs']['type'] == 'rsync'
-          config.vm.synced_folder folder['host'], folder['guest'], type: 'rsync', create: true, owner: "app", group: "app"
-	  # Configure the window for gatling to coalesce writes.
-	  if Vagrant.has_plugin?("vagrant-gatling-rsync")
-	    config.gatling.latency = 2.5
-	    config.gatling.time_format = "%H:%M:%S"
-	    # Don't automatically sync when machines with rsync folders come up.
-	    # Start syncing by running 'vagrant gatling-rsync-auto'
-	    config.gatling.rsync_on_startup = false
-	  end
-      else
-          config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
+  settings['fs']['folders'].each do |name, folder|
+  case settings['fs']['type']
+    when 'nfs'
+      config.vm.synced_folder folder['host'], folder['guest'], type: 'nfs', create: true
+
+    when 'nfs_guest'
+      uid = `id -u`.strip()
+      gid = `id -g`.strip()
+
+      config.vm.synced_folder folder['host'], folder['guest'], type: 'nfs_guest', create: true,
+      linux__nfs_options: %w(rw no_subtree_check all_squash insecure async),
+      map_uid: uid, map_gid: gid, owner: 'app', group: 'app'
+
+    when 'rsync'
+      config.vm.synced_folder folder['host'], folder['guest'], type: 'rsync', create: true, owner: "app", group: "app"
+      # Configure the window for gatling to coalesce writes.
+      if Vagrant.has_plugin?("vagrant-gatling-rsync")
+        config.gatling.latency = 2.5
+        config.gatling.time_format = "%H:%M:%S"
+        # Don't automatically sync when machines with rsync folders come up.
+        # Start syncing by running 'vagrant gatling-rsync-auto'
+        config.gatling.rsync_on_startup = false
       end
+
+    else
+      config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
     end
   end
 
-  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{magento_version} -v #{varnish_enabled}"
+
+  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{magento_version} -v #{varnish_enabled} -f #{firewall_enabled}"
 
   config.vm.provider :virtualbox do |vbox, override|
     override.vm.network "private_network", type: "dhcp"
@@ -77,7 +88,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provider :lxc do |lxc, override|
-      if settings['fs']['type'] == 'nfs'
+      if ['nfs', 'nfs_guest'].include?(settings['fs']['type'])
         # in case of lxc and nfs make sure the app user has the same uid and gid as the host
         uid = `id -u`.strip()
         gid = `id -g`.strip()
