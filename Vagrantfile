@@ -1,36 +1,20 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 require 'yaml'
-require 'fileutils'
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-# abort if vagrant-hypconfigmgmt is not installed
+# if vagrant-hypconfigmgmt is not installed, install it and abort
 if !Vagrant.has_plugin?("vagrant-hypconfigmgmt")
   system("vagrant plugin install vagrant-hypconfigmgmt")
   abort "Installed the vagrant-hypconfigmgmt.\nFor the next configuration step, please again run: \"vagrant up\""
 end
 
-# paths to local settings file
+# path to local settings file
 SETTINGS_FILE = "local.yml"
-SETTINGS_EXAMPLES_FILE = "local.example.yml"
-
-# copy base settings
-unless File.exist?(SETTINGS_FILE)
-  FileUtils.cp(SETTINGS_EXAMPLES_FILE, SETTINGS_FILE)
-end
-settings = YAML.load_file SETTINGS_FILE
-
-php_version = (settings['php'].nil? || settings['php']['version'].nil?) ? '' : settings['php']['version']
-magento_version = (settings['magento'].nil? || settings['magento']['version'].nil?) ? '' : settings['magento']['version']
-varnish_enabled = (settings['varnish'].nil? or settings['varnish']['enabled'].nil?) ? '' : settings['varnish']['enabled']
-
-if !Vagrant.has_plugin?("vagrant-gatling-rsync") and settings['fs']['type'] == 'rsync'
-  puts "Tip: run 'vagrant plugin install vagrant-gatling-rsync' to speed up \
-shared folder operations.\nYou can then sync with 'vagrant gatling-rsync-auto' \
-instead of 'vagrant rsync-auto' to increase performance"
-end
+# load the settingsfile or if it does not exist yet a hash where every attribute two levels deep is nil
+settings = YAML.load_file(SETTINGS_FILE) rescue Hash.new(Hash.new(nil))
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # run hypernode-vagrant configuration wizard if needed during 'vagrant up'
@@ -38,35 +22,33 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.ssh.forward_agent = true
 
-  if php_version == 7.0
-    config.vm.box = 'hypernode_php7'
-    config.vm.box_url = 'http://vagrant.hypernode.com/customer/php7/catalog.json'
-  else
-    config.vm.box = 'hypernode_php5'
-    config.vm.box_url = 'http://vagrant.hypernode.com/customer/php5/catalog.json'
-  end
+  config.vm.box = settings['vagrant']['box'] ||= 'hypernode_php7'
+  config.vm.box_url = settings['vagrant']['box_url'] ||= 'http://vagrant.hypernode.com/customer/php7/catalog.json'
 
-  if !settings['fs']['folders'].nil?
-    settings['fs']['folders'].each do |name, folder|
-      if settings['fs']['type'] == 'nfs'
-          config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
-      elsif settings['fs']['type'] == 'rsync'
-          config.vm.synced_folder folder['host'], folder['guest'], type: 'rsync', create: true, owner: "app", group: "app"
-	  # Configure the window for gatling to coalesce writes.
-	  if Vagrant.has_plugin?("vagrant-gatling-rsync")
-	    config.gatling.latency = 2.5
-	    config.gatling.time_format = "%H:%M:%S"
-	    # Don't automatically sync when machines with rsync folders come up.
-	    # Start syncing by running 'vagrant gatling-rsync-auto'
-	    config.gatling.rsync_on_startup = false
-	  end
+  # configure all synced folder according to the filesystem type configured.
+  (settings['fs']['folders'] ||= []).each do |name, folder|
+    case settings['fs']['type']
+      when 'nfs'
+        config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
+      when 'rsync'
+        config.vm.synced_folder folder['host'], folder['guest'], type: 'rsync', create: true, owner: "app", group: "app"
       else
-          config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
-      end
+        config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true, owner: "app", group: "app"
     end
   end
 
-  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{magento_version} -v #{varnish_enabled}"
+  if settings['fs']['type'] == 'rsync'
+    # Configure the window for gatling to coalesce writes.
+    if Vagrant.has_plugin?("vagrant-gatling-rsync")
+      config.gatling.latency = 2.5
+      config.gatling.time_format = "%H:%M:%S"
+      # Don't automatically sync when machines with rsync folders come up.
+      # Start syncing by running 'vagrant gatling-rsync-auto'
+      config.gatling.rsync_on_startup = false
+    end
+  end
+
+  config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{settings['magento']['version']} -v #{settings['varnish']['enabled']}"
 
   config.vm.provider :virtualbox do |vbox, override|
     override.vm.network "private_network", type: "dhcp"
@@ -141,9 +123,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.hostmanager.aliases = ["hypernode.local", "hypernode-alias", directory_alias, directory_hash_alias]
 
       # Add user defined (local.yml) aliases to the hosts file.
-      if !settings['hostmanager'].nil? and !settings['hostmanager']['extra-aliases'].nil?
-        node.hostmanager.aliases += settings['hostmanager']['extra-aliases']
-      end
+      node.hostmanager.aliases.concat(settings['hostmanager']['extra-aliases'] ||= [])
     end
   end
 end
