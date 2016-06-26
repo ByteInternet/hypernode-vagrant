@@ -11,21 +11,18 @@ describe VagrantHypconfigmgmt::Command do
 
   # Call the method under test after every 'it'. Similar to setUp in Python TestCase
   after do
-    subject.configure_vagrant(env)
+    subject.update_settings(env)
   end
 
   # instantiate class of which a method is to be tested
   subject { described_class.new(app, env) }
 
   # the method that we are going to test
-  describe "#configure_vagrant" do
+  describe "#update_settings" do
 
-    context "when env is passed" do
-      it "configures the settings for vagrant" do
-	# check the vagrant settings is ensured to exist in the configuration file
-        expect(subject).to receive(:ensure_setting_exists).with('vagrant')
-	# check the vagrant box type is set to the right box for the pPHP version
-	expect(subject).to receive(:ensure_vagrant_box_type_configured).with(env)
+    context "when the settings are updated" do
+      it "writes them to the settings file" do
+        expect(File).to receive(:open).once.with(H_V_SETTINGS_FILE, 'w')
       end
     end
   end

@@ -2,7 +2,7 @@ Install the build deps
 ======================
 
 ```
-sudo gem install bundler rake rspec simplecov
+sudo gem install bundler rake rspec simplecov coveralls
 ```
 
 Create the gemfile (package)

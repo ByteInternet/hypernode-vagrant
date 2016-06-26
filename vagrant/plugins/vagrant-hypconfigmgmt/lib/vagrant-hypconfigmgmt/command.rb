@@ -12,7 +12,7 @@ AVAILABLE_VARNISH_STATES = [true, false]
 
 # paths to local settings file
 H_V_SETTINGS_FILE = "local.yml"
-H_V_BASE_SETTINGS_FILE = "local.example.yml"
+H_V_BASE_SETTINGS_FILE = ".local.base.yml"
 
 RECOMMENDED_PLUGINS = ["vagrant-hostmanager", "vagrant-vbguest"]
 
@@ -31,10 +31,10 @@ module VagrantHypconfigmgmt
       if env[:machine].config.hypconfigmgmt.enabled
         changed = ensure_settings_configured(env)
         ensure_required_plugins_are_installed(env)
-	if changed
+        if changed
           env[:ui].info("Your hypernode-vagrant is now configured. Please run \"vagrant up\" again.")
-	  return
-	end
+          return
+        end
       end
       @app.call(env)
     end
@@ -48,98 +48,72 @@ module VagrantHypconfigmgmt
       end
     end
     
+
     def update_settings(settings)
       File.open(H_V_SETTINGS_FILE, 'w') {|f| f.write settings.to_yaml }
     end
     
     
     def use_default_if_input_empty(input, default)
-      if input == ''
-        return default.to_s
-      else
-        return input
-      end
+      return input == '' ? default.to_s : input
     end
     
     
-    def get_varnish_state(env)
-      input = env[:ui].ask("Do you want to enable Varnish? Enter true or false [default false]: ")
-      varnish_state = use_default_if_input_empty(input, DEFAULT_VARNISH_STATE)
-    
-      case varnish_state
-        when "true"
-          env[:ui].info("Varnish will be enabled.")
-        when "false"
-          env[:ui].info("Varnish will be disabled by loading a nocache vcl.")
-        else
-          env[:ui].error("The value #{varnish_state} is not a valid value. Please enter true or false")
-          return get_varnish_state(env)
+    def get_setting(env, available, default, ask_message)
+      input = env[:ui].ask(ask_message)
+      value = use_default_if_input_empty(input, default)
+      unless available.map { | v | v.to_s }.include?(value.to_s)
+        available_versions = get_options_string(available)
+        env[:ui].error("The value #{value} is not a valid value. Please enter #{available_versions}")
+        return get_setting(env, available, default, ask_message)
       end
-      return varnish_state == "true" ? true : false
+      return value
+    end 
+
+
+    def get_options_string(available)
+      return available.map { | v | v.to_s }.join(' or ')
     end
-    
-    
-    def get_magento_version(env)
-      available_versions = AVAILABLE_MAGENTO_VERSIONS.join(' or ')
-      input = env[:ui].ask("Is this a Magento #{available_versions} Hypernode? [default #{DEFAULT_MAGENTO_VERSION}]: ")
-      magento_version = use_default_if_input_empty(input, DEFAULT_MAGENTO_VERSION)
-    
-      case magento_version
-        when "1"
-          env[:ui].info("Nginx will be configured for Magento 1. The webdir will be /data/web/public")
-        when "2"
-          env[:ui].info("Nginx will be configured for Magento 2. /data/web/magento2/pub will be symlinked to /data/web/public")
-        else
-          env[:ui].error("The value #{magento_version} is not a valid Magento version. Please enter #{available_versions}")
-          return get_magento_version(env)
-      end
-      return magento_version.to_i
-    end
-    
-    
-    # todo: refactor this and the above function into one
+
+
     def get_php_version(env)
-      available_versions = AVAILABLE_PHP_VERSIONS.join(' or ')
-      input = env[:ui].ask("Is this a PHP #{available_versions} Hypernode? [default #{DEFAULT_PHP_VERSION}]: ")
-      php_version = use_default_if_input_empty(input, DEFAULT_PHP_VERSION)
-    
-      case php_version
-        when "5.5"
-          env[:ui].info("Will boot a box with PHP 5.5 installed")
-        when "7.0"
-          env[:ui].info("Will boot a box with PHP 7.0 installed")
-        else
-          env[:ui].error("The value #{php_version} is not a valid PHP version. Please enter #{available_versions}")
-          return get_php_version(env)
+      available_versions = get_options_string(AVAILABLE_PHP_VERSIONS)
+      ask_message = "Is this a PHP #{available_versions} Hypernode? [default #{DEFAULT_PHP_VERSION}]: "
+      php_version = get_setting(env, AVAILABLE_PHP_VERSIONS, DEFAULT_PHP_VERSION, ask_message).to_f
+      env[:ui].info("Will boot a box with PHP #{php_version} installed")
+      return php_version
+    end
+
+
+    def get_magento_version(env)
+      available_versions = get_options_string(AVAILABLE_MAGENTO_VERSIONS)
+      ask_message = "Is this a Magento #{available_versions} Hypernode? [default #{DEFAULT_MAGENTO_VERSION}]: "
+      magento_version = get_setting(env, AVAILABLE_MAGENTO_VERSIONS, DEFAULT_MAGENTO_VERSION, ask_message).to_i
+      message = "Nginx will be configured for Magento #{magento_version}."
+      case magento_version
+        when 1
+          message += " The webdir will be /data/web/public"
+        when 2
+          message += " /data/web/magento2/pub will be symlinked to /data/web/public"
       end
-      return php_version.to_f
+      env[:ui].info(message)
+      return magento_version
+    end
+
+
+    def get_varnish_state(env)
+      ask_message = "Do you want to enable Varnish? Enter true or false [default false]: "
+      varnish_enabled = get_setting(env, AVAILABLE_VARNISH_STATES, DEFAULT_VARNISH_STATE, ask_message)
+      varnish_state = varnish_enabled == 'true' ? true : false
+      message = "Varnish will be #{varnish_state ? 'enabled' : 'disabled'}"
+      if ! varnish_state
+        message += " by loading a nocache vcl."
+      end
+      env[:ui].info(message)
+      return varnish_state
     end
     
-    
-    def ensure_varnish_state_configured(env)
-      settings = retrieve_settings()
-      if settings['varnish']['enabled'].nil?
-        settings['varnish']['enabled'] = get_varnish_state(env)
-      elsif !AVAILABLE_VARNISH_STATES.include?(settings['varnish']['enabled'])
-        env[:ui].error("The Varnish state configured in local.yml is invalid.")
-        settings['varnish']['enabled'] = get_varnish_state(env)
-      end
-      update_settings(settings)
-    end
-    
-    
-    def ensure_magento_version_configured(env)
-      settings = retrieve_settings()
-      if settings['magento']['version'].nil?
-        settings['magento']['version'] = get_magento_version(env)
-      elsif !AVAILABLE_MAGENTO_VERSIONS.include?(settings['magento']['version'].to_i)
-        env[:ui].error("The Magento version configured in local.yml is invalid.")
-        settings['magento']['version'] = get_magento_version(env)
-      end
-      update_settings(settings)
-    end
-    
-    
+
     # Make sure we don't link /data/web/public on Magento 2 Vagrants
     # because that dir will be a symlink to /data/web/magento2/pub and 
     # we mount that. On Magento 1 Vagrants we need to make sure we don't
@@ -147,10 +121,8 @@ module VagrantHypconfigmgmt
     def ensure_magento_mounts_configured(env)
       settings = retrieve_settings()
       if !settings['fs'].nil? and !settings['fs']['folders'].nil?
-        if settings['fs']['disabled_folders'].nil?
-    	    settings['fs']['disabled_folders'] = Hash.new
-        end
-        if settings['magento']['version'] == 1
+        settings['fs']['disabled_folders'] ||= Hash.new
+        if settings['magento']['version'].to_s == "1"
           if !settings['fs']['disabled_folders']['magento1'].nil?
             settings['fs']['folders']['magento1'] = settings['fs']['disabled_folders']['magento1'].clone
             settings['fs']['disabled_folders'].delete('magento1')
@@ -161,7 +133,7 @@ module VagrantHypconfigmgmt
             settings['fs']['folders'].delete('magento2')
             env[:ui].info("Disabling fs->folders->magento2 in the local.yml because Magento 1 was configured.")
           end
-        elsif settings['magento']['version'] == 2
+        elsif settings['magento']['version'].to_s == "2"
           if !settings['fs']['disabled_folders']['magento2'].nil?
             settings['fs']['folders']['magento2'] = settings['fs']['disabled_folders']['magento2'].clone
             settings['fs']['disabled_folders'].delete('magento2')
@@ -179,27 +151,24 @@ module VagrantHypconfigmgmt
       end
       update_settings(settings)
     end
-    
-    
-    # todo: refactor this and the above function into one
-    def ensure_php_version_configured(env)
+
+
+    def ensure_attribute_configured(env, name, attribute, available)
       settings = retrieve_settings()
-      if settings['php']['version'].nil?
-        settings['php']['version'] = get_php_version(env)
-      elsif !AVAILABLE_PHP_VERSIONS.include?(settings['php']['version'].to_f)
-        env[:ui].error("The PHP version configured in local.yml is invalid.")
-        settings['php']['version'] = get_php_version(env)
+      if settings[name][attribute].nil?
+        settings[name][attribute] = yield
+      elsif !available.map { | v | v.to_s }.include?(settings[name][attribute].to_s)
+        env[:ui].error("The #{name} #{attribute} configured in local.yml is invalid.")
+        settings[name][attribute] = yield
       end
       update_settings(settings)
     end
-    
-    
+
+
     def ensure_setting_exists(name)
       settings = retrieve_settings()
-      if settings[name].nil?
-        settings[name] = Hash.new
-      end
-      update_settings(settings)
+      settings[name] ||= Hash.new
+      update_settings(settings) 
     end
     
     
@@ -245,19 +214,28 @@ HEREDOC
     
     def configure_magento(env)
       ensure_setting_exists('magento')
-      ensure_magento_version_configured(env)
+      ensure_attribute_configured(
+        env, 'magento', 'version', 
+        AVAILABLE_MAGENTO_VERSIONS
+      ) { get_magento_version(env) }
     end
     
     
     def configure_php(env)
       ensure_setting_exists('php')
-      ensure_php_version_configured(env)
+      ensure_attribute_configured(
+        env, 'php', 'version',
+        AVAILABLE_PHP_VERSIONS
+      ) { get_php_version(env) }
     end
     
     
     def configure_varnish(env)
       ensure_setting_exists('varnish')
-      ensure_varnish_state_configured(env)
+      ensure_attribute_configured(
+        env, 'varnish', 'state',
+        AVAILABLE_VARNISH_STATES
+      ) { get_varnish_state(env) }
     end
     
     

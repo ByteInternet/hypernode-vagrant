@@ -68,3 +68,4 @@ describe VagrantHypconfigmgmt::Command do
     end
   end
 end
+

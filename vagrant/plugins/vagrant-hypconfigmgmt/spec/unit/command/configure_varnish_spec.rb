@@ -25,8 +25,11 @@ describe VagrantHypconfigmgmt::Command do
 	# check the varnish settings is ensured to exist in the configuration file
         expect(subject).to receive(:ensure_setting_exists).with('varnish')
 	# check the varnish state is ensured to be configured
-	expect(subject).to receive(:ensure_varnish_state_configured).with(env)
+	expect(subject).to receive(:ensure_attribute_configured).with(
+          env, 'varnish', 'state', AVAILABLE_VARNISH_STATES
+	)
       end
     end
   end
 end
+

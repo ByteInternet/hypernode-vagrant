@@ -1,11 +1,10 @@
 language: ruby
 cache: bundler
 rvm: 
-  - 1.8.7
   - 1.9.3
   - 2.0
   - 2.1
   - 2.2
   - ruby-head
-install: "gem install bundler rake rspec simplecov"
+install: "gem install bundler rake rspec simplecov coveralls"
 script: ./runtests.sh

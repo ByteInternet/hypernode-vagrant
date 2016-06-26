@@ -25,8 +25,11 @@ describe VagrantHypconfigmgmt::Command do
 	# check the php settings is ensured to exist in the configuration file
         expect(subject).to receive(:ensure_setting_exists).with('php')
 	# check the php version is ensured to be configured
-	expect(subject).to receive(:ensure_php_version_configured).with(env)
+	expect(subject).to receive(:ensure_attribute_configured).with(
+          env, 'php', 'version', AVAILABLE_PHP_VERSIONS
+	)
       end
     end
   end
 end
+

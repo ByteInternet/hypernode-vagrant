@@ -25,7 +25,7 @@ describe VagrantHypconfigmgmt::Command do
   subject { described_class.new(app, env) }
 
   # the method that we are going to test
-  describe "#ensure_settings_configured" do
+  describe "#ensure_vagrant_box_type_configured" do
 
     context "when php 7.0 is configured" do
       let(:retrieved_settings) { { "php" => { "version" => 7.0 }, "vagrant" => Hash.new } }
@@ -74,4 +74,5 @@ describe VagrantHypconfigmgmt::Command do
     end
   end
 end
+
 

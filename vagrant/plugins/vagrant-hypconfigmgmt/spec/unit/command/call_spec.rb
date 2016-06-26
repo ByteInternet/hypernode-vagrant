@@ -66,6 +66,8 @@ describe VagrantHypconfigmgmt::Command do
         expect(subject).to receive(:ensure_settings_configured).with(env).and_return(false)  # no changed settings
         # check ensure_required_plugins_are_installed is called when plugin is enabled
         expect(subject).to receive(:ensure_required_plugins_are_installed).with(env).and_return(nil)
+	# check if we do not print the "please run vagrant up again" notice
+        expect(ui).to receive(:info).never.with("Your hypernode-vagrant is now configured. Please run \"vagrant up\" again.")
         # check super is also called when plugin is enabled
         expect(app).to receive(:call).with(env)
       end
@@ -81,10 +83,11 @@ describe VagrantHypconfigmgmt::Command do
         # check ensure_required_plugins_are_installed is called when plugin is enabled
         expect(subject).to receive(:ensure_required_plugins_are_installed).with(env).and_return(nil)
 	# check if we print the "please run vagrant up again" notice
-        expect(ui).to receive(:info).with("Your hypernode-vagrant is now configured. Please run \"vagrant up\" again.")
+        expect(ui).to receive(:info).once.with("Your hypernode-vagrant is now configured. Please run \"vagrant up\" again.")
         # interrupt the super call to make the user run 'vagrant up' again so changed settings take effect
         expect(app).to receive(:call).never
       end
     end
   end
 end
+

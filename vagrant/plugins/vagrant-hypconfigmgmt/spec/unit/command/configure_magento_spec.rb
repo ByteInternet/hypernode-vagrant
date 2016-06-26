@@ -25,8 +25,11 @@ describe VagrantHypconfigmgmt::Command do
 	# check the magento settings is ensured to exist in the configuration file
         expect(subject).to receive(:ensure_setting_exists).with('magento')
 	# check the magento version is ensured to be configured
-	expect(subject).to receive(:ensure_magento_version_configured).with(env)
+	expect(subject).to receive(:ensure_attribute_configured).with(
+          env, 'magento', 'version', AVAILABLE_MAGENTO_VERSIONS
+	)
       end
     end
   end
 end
+
