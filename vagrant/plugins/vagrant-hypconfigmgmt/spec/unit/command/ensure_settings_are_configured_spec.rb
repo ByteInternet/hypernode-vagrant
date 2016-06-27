@@ -41,6 +41,8 @@ describe VagrantHypconfigmgmt::Command do
         expect(subject).to receive(:configure_varnish).with(env)
 	# check the synced folder settings are configured
         expect(subject).to receive(:configure_synced_folders).with(env)
+	# check the firewall settings are configured
+        expect(subject).to receive(:configure_firewall).with(env)
 	# check the vagrant settings are configured
         expect(subject).to receive(:configure_vagrant).with(env)
 	# check true is returned when settings are updated
@@ -60,6 +62,8 @@ describe VagrantHypconfigmgmt::Command do
         expect(subject).to receive(:configure_varnish).with(env)
 	# check the synced folder settings are configured
         expect(subject).to receive(:configure_synced_folders).with(env)
+	# check the firewall settings are configured
+        expect(subject).to receive(:configure_firewall).with(env)
 	# check the vagrant settings are configured
         expect(subject).to receive(:configure_vagrant).with(env)
 	# check false is returned when settings are not updated

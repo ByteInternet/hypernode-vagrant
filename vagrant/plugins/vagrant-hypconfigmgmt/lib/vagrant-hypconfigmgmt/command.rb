@@ -10,11 +10,23 @@ AVAILABLE_PHP_VERSIONS = [5.5, 7.0]
 DEFAULT_VARNISH_STATE = false
 AVAILABLE_VARNISH_STATES = [true, false]
 
+DEFAULT_FIREWALL_STATE = false
+AVAILABLE_FIREWALL_STATES = [true, false]
+
 # paths to local settings file
 H_V_SETTINGS_FILE = "local.yml"
 H_V_BASE_SETTINGS_FILE = ".local.base.yml"
 
 RECOMMENDED_PLUGINS = ["vagrant-hostmanager", "vagrant-vbguest"]
+
+# filesystem types that need to have the firewall disabled in the guest
+# because they otherwise can cause problems
+FIREWALL_INCOMPATIBLE_FS_TYPES = ['nfs_guest']
+
+AVAILABLE_FS_TYPES = ['nfs', 'nfs_guest', 'virtualbox', 'rsync']
+# This is the only one that works on all platforms.
+# Perhaps we should consider using a different default on different platforms.
+DEFAULT_FS_TYPE = 'virtualbox'
 
 
 module VagrantHypconfigmgmt
@@ -112,7 +124,37 @@ module VagrantHypconfigmgmt
       env[:ui].info(message)
       return varnish_state
     end
+
+
+    def get_firewall_state(env)
+      ask_message = "Do you want to enable the production-like firewall? Enter true or false [default false]: "
+      firewall_enabled = get_setting(env, AVAILABLE_FIREWALL_STATES, DEFAULT_FIREWALL_STATE, ask_message)
+      firewall_state = firewall_enabled == 'true' ? true : false
+      message = "The firewall will be #{firewall_state ? 'enabled' : 'disabled'}"
+      env[:ui].info(message)
+      return firewall_state
+    end
     
+
+    def get_fs_type(env)
+      ask_message = "What filesystem type do you want to use? Options: nfs_guest, nfs, rsync, virtualbox [default #{DEFAULT_FS_TYPE}]: "
+      fs_type = get_setting(env, AVAILABLE_FS_TYPES, DEFAULT_FS_TYPE, ask_message)
+      case fs_type
+        when "nfs"
+          message = ("The guest will mount NFS folders served by the host.")
+        when "nfs_guest"
+          message = ("The host will mount NFS folders served by the guest")
+        when "virtualbox"
+          message = ("Virtualbox is the default fs type. If you later want to try a faster fs type like nfs_guest, edit local.yml")
+        when "rsync"
+          message = ("Will use rsync to sync the folders. Don't forget to start the filesync with 'vagrant rsync-auto' or 'vagrant gatling-rsync-auto'!")
+        else
+          message = ("Unknown filesystem type. If it's valid for Vagrant then there is no problem. Otherwise you can edit local.yml to change it.")
+      end 
+      env[:ui].info(message)
+      return fs_type
+    end
+
 
     # Make sure we don't link /data/web/public on Magento 2 Vagrants
     # because that dir will be a symlink to /data/web/magento2/pub and 
@@ -210,8 +252,25 @@ HEREDOC
       end
       update_settings(settings)
     end
+
       
+    def ensure_firewall_disabled_for_incompatible_fs_types(env)
+      settings = retrieve_settings()
+      if FIREWALL_INCOMPATIBLE_FS_TYPES.include?(settings['fs']['type'])
+        env[:ui].info("Disabling the firewall in the guest because fs type #{settings['fs']['type']} might run into some problems otherwise.")
+        settings['firewall']['state'] = false
+      end
+      update_settings(settings)
+    end
+
     
+    def ensure_fs_type_configured(env)
+      settings = retrieve_settings()
+      settings['fs']['type'] ||= get_fs_type(env)
+      update_settings(settings)
+    end
+    
+
     def configure_magento(env)
       ensure_setting_exists('magento')
       ensure_attribute_configured(
@@ -237,9 +296,21 @@ HEREDOC
         AVAILABLE_VARNISH_STATES
       ) { get_varnish_state(env) }
     end
+
+
+    def configure_firewall(env)
+      ensure_setting_exists('firewall')
+      ensure_firewall_disabled_for_incompatible_fs_types(env)
+      ensure_attribute_configured(
+        env, 'firewall', 'state',
+        AVAILABLE_FIREWALL_STATES
+      ) { get_firewall_state(env) }
+    end
     
     
     def configure_synced_folders(env)
+      ensure_setting_exists('fs')
+      ensure_fs_type_configured(env)
       ensure_magento_mounts_configured(env)
       validate_magento2_root(env)
       inform_if_gatling_not_installed(env)
@@ -258,6 +329,7 @@ HEREDOC
       configure_php(env)
       configure_varnish(env)
       configure_synced_folders(env)
+      configure_firewall(env)
       configure_vagrant(env)
       new_settings = retrieve_settings()
       return new_settings.to_yaml != old_settings.to_yaml

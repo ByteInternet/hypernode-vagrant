@@ -22,12 +22,16 @@ describe VagrantHypconfigmgmt::Command do
 
     context "when env is passed" do
       it "configures all the settings for the synced folders" do
+	# check if the fs settings is ensured to exist
+	expect(subject).to receive(:ensure_setting_exists).once.with('fs')
+	# check if fs type is configured
+	expect(subject).to receive(:ensure_fs_type_configured).once.with(env)
         # check the magento mounts are configured
-        expect(subject).to receive(:ensure_magento_mounts_configured).with(env)
+        expect(subject).to receive(:ensure_magento_mounts_configured).once.with(env)
         # check the directory to be mounted is validated against the magento version (pub symlink vs public)
-        expect(subject).to receive(:validate_magento2_root).with(env)
+        expect(subject).to receive(:validate_magento2_root).once.with(env)
         # check a message will be printed if gatling is not installed while the rsync fs type is specified
-        expect(subject).to receive(:inform_if_gatling_not_installed).with(env)
+        expect(subject).to receive(:inform_if_gatling_not_installed).once.with(env)
       end
     end
   end
