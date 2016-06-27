@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/ByteInternet/hypernode-vagrant.svg?branch=master)](https://travis-ci.org/ByteInternet/hypernode-vagrant)
+[![Coverage Status](https://coveralls.io/repos/github/ByteInternet/hypernode-vagrant/badge.svg)](https://coveralls.io/github/ByteInternet/hypernode-vagrant)
+
 # Hypernode test environment for MacOSX and Linux
 
 You can start developing on your own local Hypernode within 15 minutes.
