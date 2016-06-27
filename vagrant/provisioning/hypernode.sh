@@ -48,6 +48,8 @@ if [ "$magento_version" == "2" ]; then
     sudo -u $user touch /data/web/nginx/magento2.flag
     # Set correct symlink
     rm -rf /data/web/public
+    sudo -u $user mkdir -p /data/web/magento2/pub  
+    # Create pub dir if it does not exist yet
     sudo -u $user ln -fs /data/web/magento2/pub /data/web/public
 else
     sudo -u $user rm -f /data/web/nginx/magento2.flag
