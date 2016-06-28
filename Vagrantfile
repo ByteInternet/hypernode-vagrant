@@ -5,10 +5,11 @@ require 'fileutils'
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
+VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.3"
 
 # if vagrant-hypconfigmgmt is not installed, install it and abort
-if !Vagrant.has_plugin?("vagrant-hypconfigmgmt")
-  system("vagrant plugin install vagrant-hypconfigmgmt")
+if !Vagrant.has_plugin?("vagrant-hypconfigmgmt", version = VAGRANT_HYPCONFIGMGMT_VERSION)
+  system("vagrant plugin install vagrant-hypconfigmgmt --plugin-version #{VAGRANT_HYPCONFIGMGMT_VERSION}")
   abort "Installed the vagrant-hypconfigmgmt.\nFor the next configuration step, please again run: \"vagrant up\""
 end
 
@@ -31,7 +32,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     (settings['fs']['folders'] ||= []).each do |name, folder|
       case settings['fs']['type']
         when 'nfs'
-          config.vm.synced_folder folder['host'], folder['guest'], type: settings['fs']['type'], create: true
+          config.vm.synced_folder folder['host'], folder['guest'], type: 'nfs', create: true
+        when 'nfs_guest'
+          config.vm.synced_folder folder['host'], folder['guest'], type: 'nfs_guest', create: true,
+	  linux__nfs_options: %w(rw no_subtree_check all_squash insecure async),
+	  map_uid: `id -u`.strip(), map_gid: `id -g`.strip(), owner: 'app', group: 'app'
         when 'rsync'
           config.vm.synced_folder folder['host'], folder['guest'], type: 'rsync', create: true, owner: "app", group: "app"
         else
@@ -50,7 +55,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
 
-    config.vm.provision "shell", path: "vagrant/provisioning/hypernode.sh", args: "-m #{settings['magento']['version']} -v #{settings['varnish']['enabled']}"
+    config.vm.provision "shell", 
+    path: "vagrant/provisioning/hypernode.sh", 
+    args: "-m #{settings['magento']['version']} -v #{settings['varnish']['state']} -f #{settings['firewall']['state']}"
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"
@@ -63,9 +70,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provider :lxc do |lxc, override|
         if settings['fs']['type'] == 'nfs'
           # in case of lxc and nfs make sure the app user has the same uid and gid as the host
-          uid = `id -u`.strip()
-          gid = `id -g`.strip()
-          config.vm.provision "shell", path: "vagrant/provisioning/fix_uid_gid_for_lxc_nfs.sh", args: "-u #{uid} -g #{gid}"
+          config.vm.provision "shell", 
+          path: "vagrant/provisioning/fix_uid_gid_for_lxc_nfs.sh", 
+          args: "-u %s -g %s" % [ `id -u`.strip(), `id -g`.strip() ]
         end
       lxc.customize 'cgroup.memory.limit_in_bytes', '2048M'
     end
