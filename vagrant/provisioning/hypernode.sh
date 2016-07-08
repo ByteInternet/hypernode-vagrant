@@ -61,8 +61,7 @@ ps -ef | grep -v "grep" | grep varnishd -q || (service varnish start && sleep 1)
 
 # if the webroot is empty, place our default index.php which shows the settings
 if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; then
-    cp /vagrant/vagrant/resources/index.php /data/web/public/index.php
-    chown app /data/web/public/index.php
+    sudo -u $user cp /vagrant/vagrant/resources/*.{php,js,css} /data/web/public/
 fi
 
 if ! $varnish_enabled; then
