@@ -197,7 +197,10 @@ To resolve this, upgrade your virtualbox to the latest version.
 
 ### The web pages don't change
 
-Varnish is enabled by default. To check if this is what is causing your pages to remain static try clearing the cache.
+Varnish is NOT enabled by default but can be enabled in local.yml or by answering the configuration questions asked the first time `vagrant up` is executed (this will generate a local.yml)
+
+If you enabled varnish however it's possible your pages are not changing due to caching.
+To check if this is what is causing your pages to remain static try clearing the cache.
 
 ```
 # this clears the entire varnish cache (warning: makes things slow until cache is filled up again)
