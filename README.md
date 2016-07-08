@@ -175,6 +175,11 @@ If you want to use automatic config reloads on nginx config changes, change the 
 
 And then manually sync your nginx config files to the hypernode vagrant box.
 
+### [hypernode] GuestAdditions versions on your host (X.X.XX) and guest (X.X.XX) do not match.
+
+This error appears when your VM GuestAdditions installed by virtualbox are older then the one used on the hypernode vagrant. 
+To resolve this, upgrade your virtualbox to the latest version.
+
 ### The web pages don't change
 
 Varnish is enabled by default. To check if this is what is causing your pages to remain static try clearing the cache.
