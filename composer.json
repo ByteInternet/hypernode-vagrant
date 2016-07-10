@@ -1,0 +1,15 @@
+{
+    "name": "byteinternet/hypernode-vagrant",
+    "description": "Easily configurable Magento Vagrant. Hypernode development environment.",
+    "type": "project",
+    "homepage": "https://github.com/byteinternet/hypernode-vagrant",
+    "license": "MIT",
+    "authors": [
+        {
+          "name": "Hypernode Team",
+          "homepage": "http://www.hypernode.com",
+          "role": "Developer"
+        }
+    ],
+    "require": {}
+}
