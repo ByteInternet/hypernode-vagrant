@@ -45,11 +45,11 @@ The first time you run `vagrant up` after downloading the hypernode-vagrant zip 
     ==> hypernode: Your hypernode-vagrant is now configured. Please run "vagrant up" again.
 ```
 
-By answering the questions, you can decide whether:
-- A magento2 or a magento1 environment will be setup depending on what mag version you choose to use.
-- The desirable php version will be used
+By answering the questions, you can decide:
+- Whether a magento 2 or a magento 1 environment will be set up.
+- What php version should be used
 - Varnish should be enabled or not
-- A firewall configuration similar to production will be used
+- Whether firewall configuration similar to production should be configured
 
 This way a valid local.yml is created which is then used to preconfigure the hypernode-vagrant.
 When this is done, you can run `vagrant up` again to start your vagrant box.
@@ -121,7 +121,7 @@ Destroy and re-create the box
 MySQL is available at hostname hypernode.local, port 3306 or at localhost, port 3307.
 
 ```
-     # find you MySQL password in /data/web/.my.cnf by loging in to SSH
+     # find your MySQL password in /data/web/.my.cnf by loging in to SSH
      # ssh app@hypernode.local cat /data/web/.my.cnf
 
      mysql -u app --host=hypernode.local -p
@@ -266,7 +266,7 @@ And then manually sync your nginx config files to the hypernode vagrant box.
 ### [hypernode] GuestAdditions versions on your host (X.X.XX) and guest (X.X.XX) do not match.
 
 This error appears when your VM GuestAdditions installed by virtualbox are older then the one used on the hypernode vagrant.
-To resolve this, upgrade your virtualbox to the latest version.
+To resolve this, upgrade your virtualbox to the latest version and make sure you have the latest box version with vagrant box update.
 
 ### The web pages don't change
 
