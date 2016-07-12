@@ -1,0 +1,9 @@
+language: ruby
+cache: bundler
+rvm: 
+  - 2.0
+  - 2.1
+  - 2.2
+  - ruby-head
+install: "gem install bundler rake rspec simplecov coveralls"
+script: ./runtests.sh

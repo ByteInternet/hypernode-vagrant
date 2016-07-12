@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/ByteInternet/hypernode-vagrant.svg?branch=master)](https://travis-ci.org/ByteInternet/hypernode-vagrant)
+[![Coverage Status](https://coveralls.io/repos/github/ByteInternet/hypernode-vagrant/badge.svg)](https://coveralls.io/github/ByteInternet/hypernode-vagrant)
+
 # Hypernode test environment for MacOSX and Linux
 
 You can start developing on your own local Hypernode within 15 minutes.
@@ -86,8 +89,8 @@ So fire up PHPStorm and edit away locally. Then check out the Hypernode box to s
 SSH is available at port 22 on hostname hypernode.local, or at port 2222 localhost.
 
 ```
-    ssh app@hypernode.local
-```
+    ssh app@hypernode.local -oStrictHostKeyChecking=no -oAddressFamily=inet
+```bash
 
 You can use this config snippet for SSH to ease logging in and then just `ssh hypernode.local`:
 
@@ -253,6 +256,17 @@ Vagrant will notice the magento version changed and correct the shared folders s
 ### ==> default: stdin: is not a tty
 
 This is Vagrant bug [#1673](https://github.com/mitchellh/vagrant/issues/1673) and perfectly harmless.
+
+### Logging in with SSH is slow on Mac
+
+Macs try to connect over IPv6 by default, which makes logging in with SSH slow. To make it faster either add `-oAddressFamily=inet` to your ssh command or add "AddressFamily inet" to your ~/.ssh/config file.
+
+```
+MacBook-Air:hypernode-vagrant vdloo$ time ssh app@hypernode.local -A exit
+real	0m5.093s
+MacBook-Air:hypernode-vagrant vdloo$ time ssh app@hypernode.local -oAddressFamily=inet -A exit
+real	0m0.112s
+```
 
 ### The config reloader is not reloading on changes in /data/web/nginx
 
