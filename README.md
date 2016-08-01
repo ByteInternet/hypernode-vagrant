@@ -14,7 +14,7 @@ You can start developing on your own local Hypernode within 15 minutes.
 3. Clone this [repository](https://github.com/ByteInternet/hypernode-vagrant.git) using Git or download the [zip file](https://github.com/ByteInternet/hypernode-vagrant/archive/master.zip) from Github.
 
 ```
-    # check if vagrant version > 1.6.4 ?
+    # check if vagrant version > 1.7.3 ?
     vagrant --version
     cd hypernode-vagrant
     vagrant plugin install vagrant-hostmanager
