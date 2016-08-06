@@ -10,7 +10,7 @@ VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.3"
 # if vagrant-hypconfigmgmt is not installed, install it and abort
 if !Vagrant.has_plugin?("vagrant-hypconfigmgmt", version = VAGRANT_HYPCONFIGMGMT_VERSION)
   system("vagrant plugin install vagrant-hypconfigmgmt --plugin-version #{VAGRANT_HYPCONFIGMGMT_VERSION}")
-  abort "Installed the vagrant-hypconfigmgmt.\nFor the next configuration step, please again run: \"vagrant up\""
+  abort "Installed the vagrant-hypconfigmgmt plugin.\nFor the next configuration step, please again run: \"vagrant up\""
 end
 
 # path to local settings file
