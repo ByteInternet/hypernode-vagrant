@@ -270,7 +270,7 @@ real	0m0.112s
 
 ### The config reloader is not reloading on changes in /data/web/nginx
 
-/data/web/nginx is an NFS mount on your local computer. We use inotify to detect changes in the config files, but NFS is not supporting inotify.
+/data/web/nginx is an NFS mount on your local computer. We use inotify to detect changes in the config files, but NFS does not support inotify.
 If you want to use automatic config reloads on nginx config changes, change the vagrant file to not use an nfs mount by uncommenting:
 
     config.vm.synced_folder "data/web/nginx/", "/data/web/nginx/", owner: "app", group: "app", create: true
