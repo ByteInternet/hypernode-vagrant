@@ -11,6 +11,8 @@ while getopts "m:v:f:" opt; do
             varnish_enabled="$OPTARG" ;;
         f)
             firewall_enabled="$OPTARG" ;;
+        c)
+            cgroup_enabled="$OPTARG" ;;
     esac
 done
 
@@ -74,6 +76,11 @@ fi
 # the firewall gets in the way when mounting the directories with specific synced folder fs types
 if $firewall_enabled; then
     rm -f /etc/init/ufw.override
+fi
+
+if $cgroup_enabled; then
+    rm -f /etc/init/cgconfig.override
+    rm -f /etc/init/hypernode-kamikaze.override
 fi
     
 touch "$homedir/.ssh/authorized_keys"

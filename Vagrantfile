@@ -57,7 +57,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provision "shell", 
     path: "vagrant/provisioning/hypernode.sh", 
-    args: "-m #{settings['magento']['version']} -v #{settings['varnish']['state']} -f #{settings['firewall']['state']}"
+    args: "-m #{settings['magento']['version']} \
+           -v #{settings['varnish']['state']} \
+           -f #{settings['firewall']['state']} \
+           -c #{settings['cgroup']['state']}"
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"

@@ -13,6 +13,9 @@ AVAILABLE_VARNISH_STATES = [true, false]
 DEFAULT_FIREWALL_STATE = false
 AVAILABLE_FIREWALL_STATES = [true, false]
 
+DEFAULT_CGROUP_STATE = false
+AVAILABLE_CGROUP_STATES = [true, false]
+
 # paths to local settings file
 H_V_SETTINGS_FILE = "local.yml"
 H_V_BASE_SETTINGS_FILE = ".local.base.yml"
@@ -133,6 +136,19 @@ module VagrantHypconfigmgmt
       message = "The firewall will be #{firewall_state ? 'enabled' : 'disabled'}"
       env[:ui].info(message)
       return firewall_state
+    end
+
+
+    def get_cgroup_state(env)
+      ask_message = "Do you want to enable production-like memory management? \n"
+      ask_message << "This might be slower but it is more in-line with a real Hypernode. \n"
+      ask_message << "Note: for LXC boxes this setting is disabled. \n"
+      ask_message << "Enter true or false [default false]: "
+      cgroup_enabled = get_setting(env, AVAILABLE_CGROUP_STATES, DEFAULT_CGROUP_STATE, ask_message)
+      cgroup_state = cgroup_enabled == 'true' ? true : false
+      message = "Production-like memory management will be #{cgroup_state ? 'enabled' : 'disabled'}"
+      env[:ui].info(message)
+      return cgroup_state
     end
     
 
@@ -306,6 +322,15 @@ HEREDOC
         AVAILABLE_FIREWALL_STATES
       ) { get_firewall_state(env) }
     end
+
+
+    def configure_cgroup(env)
+      ensure_setting_exists('cgroup')
+      ensure_attribute_configured(
+        env, 'cgroup', 'state',
+        AVAILABLE_CGROUP_STATES
+      ) { get_cgroup_state(env) }
+    end
     
     
     def configure_synced_folders(env)
@@ -330,6 +355,7 @@ HEREDOC
       configure_varnish(env)
       configure_synced_folders(env)
       configure_firewall(env)
+      configure_cgroup(env)
       configure_vagrant(env)
       new_settings = retrieve_settings()
       return new_settings.to_yaml != old_settings.to_yaml
