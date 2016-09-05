@@ -18,14 +18,18 @@ truncate -s 0 /var/mail/app
 
 user="app"
 homedir=$(getent passwd $user | cut -d ':' -f6)
+mkdir -p /root/.ssh
 sudo -u $user mkdir -p "$homedir/.ssh"
+touch /root/.ssh/authorized_keys
 sudo -u $user touch "$homedir/.ssh/authorized_keys"
-chmod 700 "$homedir/.ssh"
-chmod 600 "$homedir/.ssh/authorized_keys"
+chmod 700 /root/.ssh "$homedir/.ssh"
+chmod 600 /root/.ssh/authorized_keys "$homedir/.ssh/authorized_keys"
 
 if ssh-add -L >/dev/null 2>/dev/null; then
-    combined=$(ssh-add -L | awk '!NF || !seen[$0]++' "$homedir/.ssh/authorized_keys" -)
-    echo "$combined" > "$homedir/.ssh/authorized_keys"
+    user_combined=$(ssh-add -L | awk '!NF || !seen[$0]++' "$homedir/.ssh/authorized_keys" -)
+    echo "$user_combined" > "$homedir/.ssh/authorized_keys"
+    root_combined=$(ssh-add -L | awk '!NF || !seen[$0]++' /root/.ssh/authorized_keys -)
+    echo "$root_combined" > "/root/.ssh/authorized_keys"
 fi
 
 cat << EOF >> $homedir/.ssh/authorized_keys
