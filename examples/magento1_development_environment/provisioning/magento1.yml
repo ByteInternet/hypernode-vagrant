@@ -1,0 +1,56 @@
+# Install Magento1 on a Hypernode
+# necessary parameters:
+  # app_name
+  # magento_installation_path
+  # magento_baseurl
+  # admin (hash containing keys first_name, last_name, password, locale, email)
+  # admin_password
+  # admin_frontname
+  # mysqlhost
+  # mysql_app_user
+  # mysql_app_password
+  # magento_db
+
+---
+- hosts: all
+  tasks:
+  - name: ensure Nginx config for Magento 1.X
+    file: state=absent force=yes path=/data/web/nginx/magento2.flag
+
+  - name: generate custom Magento settings for "app" user
+    template: src=templates/n98-magerun.yaml.j2 dest=/data/web/.n98-magerun.yaml owner=app group=app force=no
+
+  - name: update sql password for "app" user
+    mysql_user: name={{ mysql_app_user }} password={{ mysql_app_password }} priv=*.*:ALL,GRANT host=%
+
+  - name: update sql password in user my.cnf
+    ini_file: dest=/data/web/.my.cnf section=client option=password value={{ mysql_app_password }} mode=0600
+
+  - name: create database for new Magento installation
+    mysql_db: name={{ magento_db }} state=present
+
+  - name: register installation path contents
+    shell: tree {{ magento_installation_path }} -L 1
+    register: display_magento_dir
+
+  - name: install Magento as "app" user
+    when: not display_magento_dir.stdout|search('mage')
+    command: >
+      /usr/local/bin/n98-magerun install
+      --dbHost='{{ mysqlhost }}'
+      --dbUser='{{ mysql_app_user }}'
+      --dbPass='{{ mysql_app_password }}'
+      --dbName='{{ magento_db }}'
+      --installSampleData=no
+      --useDefaultConfigParams=yes
+      --magentoVersionByName='byte-mag-mirror-latest'
+      --installationFolder='{{ magento_installation_path }}'
+      --baseUrl='{{ magento_baseurl }}'
+      --replaceHtaccessFile=no
+      --no-interaction
+
+  - name: add Redis settings to Magento config xml
+    copy: src=files/local.redis.xml dest='{{ magento_installation_path }}/app/etc/local.redis.xml' owner=app group=app
+
+  - name: flush Magento cache
+    shell: /usr/local/bin/n98-magerun --root-dir=/data/web/public cache:flush
