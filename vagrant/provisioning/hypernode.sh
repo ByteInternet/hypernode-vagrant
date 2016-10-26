@@ -86,4 +86,4 @@ touch "$homedir/.ssh/authorized_keys"
 
 echo "Your hypernode-vagrant is ready! Log in with:"
 echo "ssh app@hypernode.local -oStrictHostKeyChecking=no -A"
-echo "Or visit https://$(echo `hostname` | cut -d'-' -f2).hypernode.local in your browser"
+echo "Or visit http://$(echo `hostname` | cut -d'-' -f2).hypernode.local in your browser"
