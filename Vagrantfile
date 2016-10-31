@@ -5,7 +5,7 @@ require 'fileutils'
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
-VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.3"
+VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.4"
 
 # if vagrant-hypconfigmgmt is not installed, install it and abort
 if !Vagrant.has_plugin?("vagrant-hypconfigmgmt", version = VAGRANT_HYPCONFIGMGMT_VERSION)
@@ -57,7 +57,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provision "shell", 
     path: "vagrant/provisioning/hypernode.sh", 
-    args: "-m #{settings['magento']['version']} -v #{settings['varnish']['state']} -f #{settings['firewall']['state']}"
+    args: "-m #{settings['magento']['version']} \
+           -v #{settings['varnish']['state']} \
+           -f #{settings['firewall']['state']} \
+           -c #{settings['cgroup']['state']}"
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"
