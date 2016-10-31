@@ -5,7 +5,7 @@ require 'fileutils'
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
-VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.3"
+VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.4"
 
 # if vagrant-hypconfigmgmt is not installed, install it and abort
 if !Vagrant.has_plugin?("vagrant-hypconfigmgmt", version = VAGRANT_HYPCONFIGMGMT_VERSION)
