@@ -3,7 +3,7 @@
 
 set -e
 
-while getopts "m:v:f:" opt; do
+while getopts "m:v:f:c:" opt; do
     case "$opt" in
         m)
             magento_version="$OPTARG" ;;
@@ -76,11 +76,16 @@ fi
 # the firewall gets in the way when mounting the directories with specific synced folder fs types
 if $firewall_enabled; then
     rm -f /etc/init/ufw.override
+    service ufw status | grep -q 'start/running' || service ufw start
 fi
 
 if $cgroup_enabled; then
     rm -f /etc/init/cgconfig.override
     rm -f /etc/init/hypernode-kamikaze.override
+    if [ -f /etc/cgconfig.conf ]; then
+        service cgconfig status | grep -q 'start/running' || service cgconfig start
+        service hypernode-kamikaze status | grep -q 'start/running' || service hypernode-kamikaze start
+    fi
 fi
     
 touch "$homedir/.ssh/authorized_keys"
