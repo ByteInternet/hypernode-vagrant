@@ -59,6 +59,8 @@ varnish:
   state: false
 firewall:
   state: true
+cgroup:
+  state: true
 vagrant:
   box: hypernode_php5
   box_url: http://vagrant.hypernode.com/customer/php5/catalog.json
