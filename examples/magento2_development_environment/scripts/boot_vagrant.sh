@@ -26,8 +26,10 @@ rm -Rf hypernode-vagrant/data/web/public
 rm -Rf hypernode-vagrant/data/web/magento2
 ln -s ../../../magento2 hypernode-vagrant/data/web/
 
-# copy our local.yml so we can configure things like php version
-cp local.yml hypernode-vagrant/local.yml
+if [ -f local.yml ]; then
+    # copy our local.yml so we can configure things like php version
+    cp local.yml hypernode-vagrant/local.yml
+fi
 
 # move into the hypernode-vagrant repository directory
 cd hypernode-vagrant
