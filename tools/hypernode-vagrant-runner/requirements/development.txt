@@ -1,0 +1,4 @@
+nose
+mock
+autopep8
+pep8

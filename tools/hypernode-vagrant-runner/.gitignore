@@ -1,0 +1,10 @@
+# PyCharm
+.idea
+
+# Vim
+.swp
+.swo
+
+# Python
+*.pyc
+venv
