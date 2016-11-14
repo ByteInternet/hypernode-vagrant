@@ -13,3 +13,6 @@ ruby -e "require 'yaml';YAML.load_file('$DIRNAME/.local.base.yml')" \
 echo "Running vagrant-hypconfigmgmt tests.."
 # run vagrant-hypconfigmgmt tests
 (cd "$DIRNAME/vagrant/plugins/vagrant-hypconfigmgmt/" && make test)
+
+# run hypernode-vagrant-runner tests
+(cd "$DIRNAME/tools/hypernode-vagrant-runner/" && bash runtests.sh -1)
