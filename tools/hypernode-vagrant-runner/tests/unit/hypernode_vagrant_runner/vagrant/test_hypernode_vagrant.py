@@ -22,7 +22,8 @@ class TestHypernodeVagrant(TestCase):
         with hypernode_vagrant():
             self.create_hypernode_vagrant.assert_called_once_with(
                 directory=None,
-                php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
+                php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                xdebug_enabled=False
             )
 
     def test_hypernode_vagrant_creates_hypernode_vagrant_using_specified_checkout(self):
@@ -31,14 +32,24 @@ class TestHypernodeVagrant(TestCase):
         ):
             self.create_hypernode_vagrant.assert_called_once_with(
                 directory='/your/already/checked/out/hypernode-vagrant',
-                php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
+                php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                xdebug_enabled=False
             )
 
     def test_hypernode_vagrant_creates_hypernode_vagrant_of_specified_php_version(self):
         with hypernode_vagrant(php_version='7.0'):
             self.create_hypernode_vagrant.assert_called_once_with(
                 directory=None,
-                php_version='7.0'
+                php_version='7.0',
+                xdebug_enabled=False
+            )
+
+    def test_hypernode_vagrant_creates_hypernode_vagrant_with_xdebug_enabled_if_specified(self):
+        with hypernode_vagrant(xdebug_enabled=True):
+            self.create_hypernode_vagrant.assert_called_once_with(
+                directory=None,
+                php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                xdebug_enabled=True
             )
 
     def test_hypernode_vagrant_destroys_hypernode_vagrant_after_context(self):

@@ -16,14 +16,27 @@ class TestStartHypernodeVagrant(TestCase):
         start_hypernode_vagrant('/tmp/tmpdir1234')
 
         self.write_hypernode_vagrant_configuration.assert_called_once_with(
-            '/tmp/tmpdir1234', php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
+            '/tmp/tmpdir1234',
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=False
         )
 
     def test_start_hypernode_vagrant_writes_hypernode_vagrant_configuration_for_specified_php_version(self):
         start_hypernode_vagrant('/tmp/tmpdir1234', php_version='5.5')
 
         self.write_hypernode_vagrant_configuration.assert_called_once_with(
-            '/tmp/tmpdir1234', php_version='5.5'
+            '/tmp/tmpdir1234',
+            php_version='5.5',
+            xdebug_enabled=False
+        )
+
+    def test_start_hypernode_vagrant_writes_hypernode_vagrant_configuration_with_xdebug_enabled_if_specified(self):
+        start_hypernode_vagrant('/tmp/tmpdir1234', xdebug_enabled=True)
+
+        self.write_hypernode_vagrant_configuration.assert_called_once_with(
+            '/tmp/tmpdir1234',
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=True
         )
 
     def test_start_hypernode_vagrant_runs_vagrant_up(self):

@@ -45,6 +45,8 @@ describe VagrantHypconfigmgmt::Command do
         expect(subject).to receive(:configure_firewall).with(env)
 	# check the memory management settings are configured
         expect(subject).to receive(:configure_cgroup).with(env)
+	# check the Xdebug settings are configured
+        expect(subject).to receive(:configure_xdebug).with(env)
 	# check the vagrant settings are configured
         expect(subject).to receive(:configure_vagrant).with(env)
 	# check true is returned when settings are updated
@@ -68,6 +70,8 @@ describe VagrantHypconfigmgmt::Command do
         expect(subject).to receive(:configure_firewall).with(env)
 	# check the memory management settings are configured
         expect(subject).to receive(:configure_cgroup).with(env)
+	# check the Xdebug settings are configured
+        expect(subject).to receive(:configure_xdebug).with(env)
 	# check the vagrant settings are configured
         expect(subject).to receive(:configure_vagrant).with(env)
 	# check false is returned when settings are not updated

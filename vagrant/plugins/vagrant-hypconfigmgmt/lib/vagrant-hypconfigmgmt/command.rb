@@ -16,6 +16,9 @@ AVAILABLE_FIREWALL_STATES = [true, false]
 DEFAULT_CGROUP_STATE = false
 AVAILABLE_CGROUP_STATES = [true, false]
 
+DEFAULT_XDEBUG_STATE = false
+AVAILABLE_XDEBUG_STATES = [true, false]
+
 # paths to local settings file
 H_V_SETTINGS_FILE = "local.yml"
 H_V_BASE_SETTINGS_FILE = ".local.base.yml"
@@ -150,7 +153,17 @@ module VagrantHypconfigmgmt
       env[:ui].info(message)
       return cgroup_state
     end
-    
+
+
+    def get_xdebug_state(env)
+      ask_message = "Do you want to install Xdebug? Enter true or false [default false]: "
+      xdebug_enabled = get_setting(env, AVAILABLE_XDEBUG_STATES, DEFAULT_XDEBUG_STATE, ask_message)
+      xdebug_state = xdebug_enabled == 'true' ? true : false
+      message = "Xdebug will be #{xdebug_state ? 'enabled' : 'disabled'}"
+      env[:ui].info(message)
+      return xdebug_state
+    end
+
 
     def get_fs_type(env)
       ask_message = "What filesystem type do you want to use? Options: nfs_guest, nfs, rsync, virtualbox [default #{DEFAULT_FS_TYPE}]: "
@@ -331,8 +344,17 @@ HEREDOC
         AVAILABLE_CGROUP_STATES
       ) { get_cgroup_state(env) }
     end
-    
-    
+
+
+    def configure_xdebug(env)
+      ensure_setting_exists('xdebug')
+      ensure_attribute_configured(
+        env, 'xdebug', 'state',
+        AVAILABLE_XDEBUG_STATES
+      ) { get_xdebug_state(env) }
+    end
+
+
     def configure_synced_folders(env)
       ensure_setting_exists('fs')
       ensure_fs_type_configured(env)
@@ -356,6 +378,7 @@ HEREDOC
       configure_synced_folders(env)
       configure_firewall(env)
       configure_cgroup(env)
+      configure_xdebug(env)
       configure_vagrant(env)
       new_settings = retrieve_settings()
       return new_settings.to_yaml != old_settings.to_yaml

@@ -44,6 +44,8 @@ firewall:
   state: true
 cgroup:
   state: true
+xdebug:
+  state: {xdebug_enabled}
 vagrant:
   box: {box_name}
   box_url: {box_url}
