@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # this script fixes the uid and gid for the app user so that it has the right permissions to 
-# interact with an nfs share if the box is lxc
+# interact with an nfs share
 # see: https://github.com/fgrehm/vagrant-lxc/issues/151
 
 set -e
