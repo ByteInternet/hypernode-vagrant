@@ -55,6 +55,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
 
+    if settings['fs']['type'] == 'nfs'
+      # in case of nfs make sure the app user has the same uid and gid as the host
+      config.vm.provision "shell",
+      path: "vagrant/provisioning/fix_uid_gid_for_nfs.sh",
+      args: "-u %s -g %s" % [ `id -u`.strip(), `id -g`.strip() ]
+    end
+
     config.vm.provision "shell", 
     path: "vagrant/provisioning/hypernode.sh", 
     args: "-m #{settings['magento']['version']} \
@@ -72,13 +79,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provider :lxc do |lxc, override|
       lxc.customize 'cgroup.memory.limit_in_bytes', '2048M'
-    end
-
-    if settings['fs']['type'] == 'nfs'
-      # in case of nfs make sure the app user has the same uid and gid as the host
-      config.vm.provision "shell",
-      path: "vagrant/provisioning/fix_uid_gid_for_nfs.sh",
-      args: "-u %s -g %s" % [ `id -u`.strip(), `id -g`.strip() ]
     end
 
     if Vagrant.has_plugin?("vagrant-hostmanager")
