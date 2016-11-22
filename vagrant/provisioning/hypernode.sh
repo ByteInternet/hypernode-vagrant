@@ -76,7 +76,7 @@ if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; the
 fi
 
 if $xdebug_enabled; then
-    XDEBUG_RELEASE="https://xdebug.org/files/xdebug-2.5.0RC1.tgz"
+    XDEBUG_RELEASE="https://xdebug.org/files/xdebug-2.5.0rc1.tgz"
     echo "Ensuring Xdebug is installed"
 
     # Install Xdebug for retrieving extended debug information and 
