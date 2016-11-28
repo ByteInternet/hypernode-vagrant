@@ -57,7 +57,8 @@ class TestCreateHypernodeVagrant(TestCase):
 
         self.start_hypernode_vagrant.assert_called_once_with(
             self.ensure_directory_for_checkout.return_value,
-            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=False
         )
 
     def test_create_hypernode_vagrant_starts_hypernode_vagrant_with_specified_php_version(self):
@@ -65,7 +66,17 @@ class TestCreateHypernodeVagrant(TestCase):
 
         self.start_hypernode_vagrant.assert_called_once_with(
             self.ensure_directory_for_checkout.return_value,
-            php_version='5.5'
+            php_version='5.5',
+            xdebug_enabled=False
+        )
+
+    def test_create_hypernode_vagrant_starts_hypernode_vagrant_with_xdebug_installed_if_specified(self):
+        create_hypernode_vagrant(xdebug_enabled=True)
+
+        self.start_hypernode_vagrant.assert_called_once_with(
+            self.ensure_directory_for_checkout.return_value,
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=True
         )
 
     def test_create_hypernode_vagrant_returns_ensured_directory(self):

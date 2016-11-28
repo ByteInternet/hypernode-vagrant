@@ -59,6 +59,11 @@ def parse_start_runner_arguments():
         default=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
     )
     parser.add_argument(
+        '--enable-xdebug',
+        action='store_true',
+        help='Enable xdebug in the Vagrant'
+    )
+    parser.add_argument(
         '--user',
         help='The SSH user to run the command as. Default is '
              '{}'.format(HYPERNODE_VAGRANT_DEFAULT_USER),
@@ -80,5 +85,6 @@ def start_runner():
         run_once=args.run_once,
         directory=args.pre_existing_vagrant_path,
         php_version=args.php,
-        ssh_user=args.user
+        ssh_user=args.user,
+        xdebug_enabled=args.enable_xdebug
     )

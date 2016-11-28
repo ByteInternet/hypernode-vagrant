@@ -23,6 +23,7 @@ class TestWriteHypernodeVagrantConfiguration(TestCase):
         with open(self.temp_config_file) as f:
             ret = f.read()
         expected_configuration = HYPERNODE_VAGRANT_CONFIGURATION.format(
+            xdebug_enabled='false',
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             box_name=HYPERNODE_VAGRANT_BOX_NAMES[
                 HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
@@ -39,12 +40,30 @@ class TestWriteHypernodeVagrantConfiguration(TestCase):
         with open(self.temp_config_file) as f:
             ret = f.read()
         expected_configuration = HYPERNODE_VAGRANT_CONFIGURATION.format(
+                xdebug_enabled='false',
                 php_version='5.5',
                 box_name=HYPERNODE_VAGRANT_BOX_NAMES[
                     '5.5'
                 ],
                 box_url=HYPERNODE_VAGRANT_BOX_URLS[
                     '5.5'
+                ]
+        )
+        self.assertEqual(ret, expected_configuration)
+
+    def test_write_hypernode_vagrant_configuration_writes_config_with_xdebug_enabled_if_specified(self):
+        write_hypernode_vagrant_configuration(self.temp_dir, xdebug_enabled=True)
+
+        with open(self.temp_config_file) as f:
+            ret = f.read()
+        expected_configuration = HYPERNODE_VAGRANT_CONFIGURATION.format(
+                xdebug_enabled='true',
+                php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                box_name=HYPERNODE_VAGRANT_BOX_NAMES[
+                    HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
+                ],
+                box_url=HYPERNODE_VAGRANT_BOX_URLS[
+                    HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
                 ]
         )
         self.assertEqual(ret, expected_configuration)

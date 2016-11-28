@@ -90,6 +90,19 @@ class TestParseStartRunnerArguments(TestCase):
             self.argument_parser.return_value.add_argument.mock_calls
         )
 
+    def test_parse_start_runner_adds_enable_xdebug_flag(self):
+        parse_start_runner_arguments()
+
+        expected_call = call(
+            '--enable-xdebug',
+            action='store_true',
+            help=ANY,
+        )
+        self.assertIn(
+            expected_call,
+            self.argument_parser.return_value.add_argument.mock_calls
+        )
+
     def test_parse_start_runner_adds_user_flag(self):
         parse_start_runner_arguments()
 

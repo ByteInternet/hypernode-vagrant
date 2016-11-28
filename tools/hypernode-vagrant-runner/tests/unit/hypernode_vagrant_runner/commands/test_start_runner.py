@@ -26,5 +26,6 @@ class TestStartRunner(TestCase):
             run_once=self.args.run_once,
             directory=self.args.pre_existing_vagrant_path,
             php_version=self.args.php,
-            ssh_user=self.args.user
+            ssh_user=self.args.user,
+            xdebug_enabled=self.args.enable_xdebug
         )

@@ -27,7 +27,8 @@ class TestLaunchRunner(TestCase):
 
         self.hypernode_vagrant.assert_called_once_with(
             directory=None,
-            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=False
         )
 
     def test_launch_runner_uses_hypernode_vagrant_context_from_specified_pre_existing_checkout(self):
@@ -37,7 +38,8 @@ class TestLaunchRunner(TestCase):
 
         self.hypernode_vagrant.assert_called_once_with(
             directory='/home/some_user/code/projects/hypernode-vagrant',
-            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=False
         )
 
     def test_launch_runner_uses_hypernode_vagrant_context_with_specific_php_version(self):
@@ -47,7 +49,19 @@ class TestLaunchRunner(TestCase):
 
         self.hypernode_vagrant.assert_called_once_with(
             directory=None,
-            php_version='5.5'
+            php_version='5.5',
+            xdebug_enabled=False
+        )
+
+    def test_launch_runner_uses_hypernode_vagrant_context_with_xdebug_enabled_if_specified(self):
+        launch_runner(
+            xdebug_enabled=True
+        )
+
+        self.hypernode_vagrant.assert_called_once_with(
+            directory=None,
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=True
         )
 
     def test_launch_runner_runs_project_command_in_context(self):

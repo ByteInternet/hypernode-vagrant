@@ -35,17 +35,20 @@ def get_networking_information_from_vagrant(directory):
 
 
 @contextmanager
-def hypernode_vagrant(directory=None, php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION):
+def hypernode_vagrant(directory=None, php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                      xdebug_enabled=False):
     """
     Run an ephemeral hypernode-vagrant and yield the connection details
     :param str directory: The hypernode-vagrant checkout to use.
     By default a temporary directory is created which is cleaned up
     after the context exits.
     :param str php_version: The PHP version to use
+    :param bool xdebug_enabled: Install xdebug in the vagrant
     :yield dict vagrant_ssh_config: Parsed vagrant ssh-config
     """
     checkout_directory = create_hypernode_vagrant(
-        directory=directory, php_version=php_version
+        directory=directory, php_version=php_version,
+        xdebug_enabled=xdebug_enabled
     )
     try:
         yield get_networking_information_from_vagrant(checkout_directory)

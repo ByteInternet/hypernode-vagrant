@@ -67,7 +67,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     args: "-m #{settings['magento']['version']} \
            -v #{settings['varnish']['state']} \
            -f #{settings['firewall']['state']} \
-           -c #{settings['cgroup']['state']}"
+           -c #{settings['cgroup']['state']} \
+           -x #{settings['xdebug']['state']}"
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"

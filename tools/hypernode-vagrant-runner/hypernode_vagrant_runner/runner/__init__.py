@@ -73,7 +73,8 @@ def loop_run_project_command_in_vagrant(project_path, command_to_run,
 def launch_runner(project_path=None, command_to_run=None,
                   run_once=False, directory=None,
                   php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
-                  ssh_user=HYPERNODE_VAGRANT_DEFAULT_USER
+                  ssh_user=HYPERNODE_VAGRANT_DEFAULT_USER,
+                  xdebug_enabled=False
                   ):
     """
     Run the hook inside an ephemeral hypernode-vagrant context
@@ -87,10 +88,11 @@ def launch_runner(project_path=None, command_to_run=None,
     By default a temporary directory with a fresh checkout is created
     :param str php_version: The PHP version to use
     :param str ssh_user: The SSH user to use to run the hook as
+    :param bool xdebug_enabled: Install xdebug in the vagrant
     :return None:
     """
     with hypernode_vagrant(
-        directory=directory, php_version=php_version
+        directory=directory, php_version=php_version, xdebug_enabled=xdebug_enabled
     ) as info:
         runner = run_project_command_in_vagrant if \
             run_once or not command_to_run else loop_run_project_command_in_vagrant

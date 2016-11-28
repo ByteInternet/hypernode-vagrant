@@ -96,18 +96,23 @@ def run_vagrant_up(directory):
 
 
 def write_hypernode_vagrant_configuration(
-        directory, php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION):
+        directory,
+        php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+        xdebug_enabled=False
+):
     """
     Write the hypernode-vagrant local.yml configuration file to the
     hypernode-vagrant directory.
     :param str directory: The hypernode-vagrant checkout directory
     :param str php_version: The PHP version to use
+    :param bool xdebug_enabled: Install xdebug in the vagrant
     :return None:
     """
     log.info("Writing configuration file to the hypernode-vagrant directory")
     local_yml_path = join(directory, 'local.yml')
     file_handle = open(local_yml_path, 'w')
     configuration = HYPERNODE_VAGRANT_CONFIGURATION.format(
+        xdebug_enabled='true' if xdebug_enabled else 'false',
         php_version=php_version,
         box_name=HYPERNODE_VAGRANT_BOX_NAMES[php_version],
         box_url=HYPERNODE_VAGRANT_BOX_URLS[php_version]
@@ -117,24 +122,30 @@ def write_hypernode_vagrant_configuration(
 
 
 def start_hypernode_vagrant(directory,
-                            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION):
+                            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                            xdebug_enabled=False):
     """
     Write the configurations and start the Vagrant
     :param str directory: The directory in which to start the hypernode-vagrant
     :param str php_version: The PHP version to use
+    :param bool xdebug_enabled: Install xdebug in the vagrant
     :return None:
     """
-    write_hypernode_vagrant_configuration(directory, php_version=php_version)
+    write_hypernode_vagrant_configuration(
+        directory, php_version=php_version, xdebug_enabled=xdebug_enabled
+    )
     run_vagrant_up(directory)
 
 
 def create_hypernode_vagrant(directory=None,
-                             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION):
+                             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                             xdebug_enabled=False):
     """
     Create a hypernode-vagrant
     :param str directory: Path to the hypernode-vagrant checkout,
     None for temporary directory
     :param str php_version: The PHP version to use
+    :param bool xdebug_enabled: Install xdebug in the vagrant
     :return str directory: Path to the hypernode-vagrant checkout
     None for a temp dir that will automatically be created
     """
@@ -142,5 +153,9 @@ def create_hypernode_vagrant(directory=None,
     clone_path = ensure_directory_for_checkout(directory=directory)
     ensure_hypernode_vagrant_checkout(directory=clone_path)
     ensure_required_plugins_are_installed()
-    start_hypernode_vagrant(clone_path, php_version=php_version)
+    start_hypernode_vagrant(
+        clone_path,
+        php_version=php_version,
+        xdebug_enabled=xdebug_enabled
+    )
     return clone_path
