@@ -80,6 +80,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provider :lxc do |lxc, override|
       lxc.customize 'cgroup.memory.limit_in_bytes', '2048M'
+      if File.exists?('/etc/redhat-release')
+        lxc.customize 'network.link', 'virbr0'
+      end
     end
 
     if Vagrant.has_plugin?("vagrant-hostmanager")
