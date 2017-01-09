@@ -123,7 +123,8 @@ if $xdebug_enabled; then
     echo "this article: https://support.hypernode.com/knowledgebase/install-xdebug-hypernode-vagrant/"
 fi
 
-if ! $varnish_enabled; then su $user -c "echo -e 'vcl 4.0;\nbackend default {\n .host = \"127.0.0.1\";\n .port= \"8080\";\n}\nsub vcl_recv {\n return(pass);\n}' > /data/web/disabled_caching.vcl"
+if ! $varnish_enabled; then 
+    su $user -c "echo -e 'vcl 4.0;\nbackend default {\n .host = \"127.0.0.1\";\n .port= \"8080\";\n}\nsub vcl_recv {\n return(pass);\n}' > /data/web/disabled_caching.vcl"
     varnishadm vcl.list | grep -q nocache || varnishadm vcl.load nocache /data/web/disabled_caching.vcl
     varnishadm vcl.use nocache
 fi
