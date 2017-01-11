@@ -18,6 +18,7 @@ SETTINGS_FILE = "local.yml"
 # load the settingsfile or if it does not exist yet a hash where every attribute two levels deep is nil
 settings = YAML.load_file(SETTINGS_FILE) rescue Hash.new(Hash.new(nil))
 
+require_relative 'vagrant/plugins/inline/ensure-varnish.rb'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # run hypernode-vagrant configuration wizard if needed during 'vagrant up'
   config.hypconfigmgmt.enabled = true  

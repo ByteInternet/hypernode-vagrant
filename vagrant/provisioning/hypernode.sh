@@ -43,7 +43,7 @@ EOF
 
 # Restart varnish if the hostname changed
 if [ ! -d "/var/lib/varnish/$HOSTNAME" ]; then
-    service varnish restart
+    service varnish restart && sleep 1
 fi
 
 rm -rf /etc/cron.d/hypernode-fpm-monitor
@@ -64,10 +64,6 @@ if [ "$magento_version" == "2" ]; then
 else
     sudo -u $user rm -f /data/web/nginx/magento2.flag
 fi
-
-# ensure varnish is running. in lxc vagrant boxes for some reason the varnish init script in /etc/init.d doesn't bring up the service on boot
-# todo: find out why varnish isn't always started on startup on lxc instances
-ps -ef | grep -v "grep" | grep varnishd -q || (service varnish start && sleep 1)
 
 # if the webroot is empty, place our default index.php which shows the settings
 if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; then
@@ -132,7 +128,7 @@ if $xdebug_enabled; then
     echo "this article: https://support.hypernode.com/knowledgebase/install-xdebug-hypernode-vagrant/"
 fi
 
-if ! $varnish_enabled; then
+if ! $varnish_enabled; then 
     su $user -c "echo -e 'vcl 4.0;\nbackend default {\n .host = \"127.0.0.1\";\n .port= \"8080\";\n}\nsub vcl_recv {\n return(pass);\n}' > /data/web/disabled_caching.vcl"
     varnishadm vcl.list | grep -q nocache || varnishadm vcl.load nocache /data/web/disabled_caching.vcl
     varnishadm vcl.use nocache
