@@ -1,9 +1,9 @@
 from logging import getLogger
 from genericpath import isdir
+from os import makedirs
 from os.path import join
 from tempfile import mkdtemp
 from os.path import isfile
-from subprocess import check_call
 
 from hypernode_vagrant_runner.settings import HYPERNODE_VAGRANT_REPOSITORY, REQUIRED_VAGRANT_PLUGINS, \
     HYPERNODE_VAGRANT_CONFIGURATION, HYPERNODE_VAGRANT_BOX_NAMES, HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION, \
@@ -13,17 +13,14 @@ from hypernode_vagrant_runner.utils import try_sudo, run_local_command
 log = getLogger(__name__)
 
 
-def raise_error_if_no_such_directory(directory):
+def ensure_directory(directory):
     """
-    Raise a RuntimeError if the directory does not exist
-    :param str directory: Directory to check
+    Create the directory if it does not exist
+    :param str directory: Directory to create
     :return None:
     """
     if not isdir(directory):
-        raise RuntimeError(
-            "Directory {} does not exists! Perhaps you meant to specify a "
-            "different directory. Can't start the Vagrant.".format(directory)
-        )
+        makedirs(directory)
 
 
 def ensure_directory_for_checkout(directory=None):
@@ -36,7 +33,7 @@ def ensure_directory_for_checkout(directory=None):
     """
     log.info("Ensuring directory for checkout")
     if directory:
-        raise_error_if_no_such_directory(directory)
+        ensure_directory(directory)
     else:
         log.info("Creating temporary directory")
     return directory or mkdtemp()
