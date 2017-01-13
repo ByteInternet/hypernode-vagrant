@@ -36,7 +36,7 @@ def get_networking_information_from_vagrant(directory):
 
 @contextmanager
 def hypernode_vagrant(directory=None, php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
-                      xdebug_enabled=False):
+                      xdebug_enabled=False, skip_try_sudo=False):
     """
     Run an ephemeral hypernode-vagrant and yield the connection details
     :param str directory: The hypernode-vagrant checkout to use.
@@ -44,11 +44,12 @@ def hypernode_vagrant(directory=None, php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_
     after the context exits.
     :param str php_version: The PHP version to use
     :param bool xdebug_enabled: Install xdebug in the vagrant
+    :param bool skip_try_sudo: Skip try to sudo beforehand to fail early
     :yield dict vagrant_ssh_config: Parsed vagrant ssh-config
     """
     checkout_directory = create_hypernode_vagrant(
         directory=directory, php_version=php_version,
-        xdebug_enabled=xdebug_enabled
+        xdebug_enabled=xdebug_enabled, skip_try_sudo=skip_try_sudo
     )
     try:
         yield get_networking_information_from_vagrant(checkout_directory)
