@@ -134,19 +134,20 @@ def start_hypernode_vagrant(directory,
     run_vagrant_up(directory)
 
 
-def create_hypernode_vagrant(directory=None,
-                             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
-                             xdebug_enabled=False):
+def create_hypernode_vagrant(directory=None, php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                             xdebug_enabled=False, skip_try_sudo=False):
     """
     Create a hypernode-vagrant
     :param str directory: Path to the hypernode-vagrant checkout,
     None for temporary directory
     :param str php_version: The PHP version to use
     :param bool xdebug_enabled: Install xdebug in the vagrant
+    :param bool skip_try_sudo: Skip try to sudo beforehand to fail early
     :return str directory: Path to the hypernode-vagrant checkout
     None for a temp dir that will automatically be created
     """
-    try_sudo()
+    if not skip_try_sudo:
+        try_sudo()
     clone_path = ensure_directory_for_checkout(directory=directory)
     ensure_hypernode_vagrant_checkout(directory=clone_path)
     ensure_required_plugins_are_installed()

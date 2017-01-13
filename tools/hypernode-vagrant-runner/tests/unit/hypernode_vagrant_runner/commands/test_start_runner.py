@@ -27,5 +27,6 @@ class TestStartRunner(TestCase):
             directory=self.args.pre_existing_vagrant_path,
             php_version=self.args.php,
             ssh_user=self.args.user,
-            xdebug_enabled=self.args.enable_xdebug
+            xdebug_enabled=self.args.enable_xdebug,
+            skip_try_sudo=self.args.skip_try_sudo
         )

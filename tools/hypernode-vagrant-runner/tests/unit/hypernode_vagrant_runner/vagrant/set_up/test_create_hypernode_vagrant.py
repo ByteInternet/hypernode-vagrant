@@ -26,6 +26,11 @@ class TestCreateHypernodeVagrant(TestCase):
 
         self.try_sudo.assert_called_once_with()
 
+    def test_create_hypernode_vagrant_does_not_try_sudo_if_skip_try_sudo(self):
+        create_hypernode_vagrant(skip_try_sudo=True)
+
+        self.assertFalse(self.try_sudo.called)
+
     def test_create_hypernode_vagrant_ensures_directory_for_checkout(self):
         create_hypernode_vagrant()
 

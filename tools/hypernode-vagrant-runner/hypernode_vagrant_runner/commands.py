@@ -64,6 +64,11 @@ def parse_start_runner_arguments():
         help='Enable xdebug in the Vagrant'
     )
     parser.add_argument(
+        '--skip-try-sudo',
+        action='store_true',
+        help='Do not test sudo before attempting to start the Vagrant'
+    )
+    parser.add_argument(
         '--user',
         help='The SSH user to run the command as. Default is '
              '{}'.format(HYPERNODE_VAGRANT_DEFAULT_USER),
@@ -86,5 +91,6 @@ def start_runner():
         directory=args.pre_existing_vagrant_path,
         php_version=args.php,
         ssh_user=args.user,
-        xdebug_enabled=args.enable_xdebug
+        xdebug_enabled=args.enable_xdebug,
+        skip_try_sudo=args.skip_try_sudo
     )
