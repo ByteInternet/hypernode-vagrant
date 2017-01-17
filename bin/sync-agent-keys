@@ -1,0 +1,31 @@
+#!/bin/bash
+TMPFILE="$( mktemp )"
+
+## Test if there are keys loaded in the SSH agent
+if (ssh-add -l | grep -q "The SSH agent has no identities" ) ; then
+    echo "Please add some keys to your ssh agent first!"
+    exit 1
+fi
+
+## Get all keys from SSH agent
+echo "Getting all keys from SSH agent"
+for KEY in $( ssh-add -l  | awk '{print $(NF-1) }' ); do
+    PUBKEY="${KEY}.pub"
+    if [ ! -f "$PUBKEY" ] ; then
+        echo "Public key for $KEY not found! Skipping..."
+        continue
+    fi
+    cat $PUBKEY >> $TMPFILE && echo >> $TMPFILE
+done
+
+## Echo keys to ~app/.ssh/authorized_keys
+echo "Putting public keys on vagrant node"
+cat $TMPFILE | vagrant ssh -- "cat - > /tmp/key ; sudo mkdir -p /data/web/.ssh ; sudo mv /tmp/key /data/web/.ssh/authorized_keys ; sudo chmod 600 /data/web/.ssh/authorized_keys ; sudo chown app:app /data/web/.ssh/authorized_keys"
+
+## Validate output and retrieve ip
+if [ "$?" != 0 ]; then
+   echo "Something went wrong placing your public key on your hypernode vagrant"
+else
+   IP="$( vagrant ssh -- "ifconfig eth1 | grep inet"   | cut -d: -f2 | awk '{print $1}')"
+   echo "You can now log in with ssh as user app@$IP"
+fi
