@@ -1,11 +1,12 @@
 from logging import getLogger
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, check_call
 
 from os import system
+from sys import stdout
 
 from hypernode_vagrant_runner.settings import HYPERNODE_VAGRANT_DEFAULT_USER, \
     UPLOAD_PATH
-from hypernode_vagrant_runner.utils import write_output_to_stdout, run_local_command
+from hypernode_vagrant_runner.utils import write_output_to_stdout
 
 try:
     # Import quote from shlex in case of python 3
@@ -55,7 +56,7 @@ def run_command_in_vagrant(command_to_run, vagrant_info,
         vagrant_info, ssh_user=ssh_user, command_to_run=command_to_run
     )
     try:
-        run_local_command(ssh_wrapper_command, shell=True)
+        check_call(ssh_wrapper_command, shell=True, stdout=stdout, bufsize=1)
     except CalledProcessError as e:
         log.info("Running command in Vagrant exited nonzero")
         write_output_to_stdout(e.output)
