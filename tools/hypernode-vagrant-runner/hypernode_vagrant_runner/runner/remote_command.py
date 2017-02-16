@@ -6,7 +6,6 @@ from sys import stdout
 
 from hypernode_vagrant_runner.settings import HYPERNODE_VAGRANT_DEFAULT_USER, \
     UPLOAD_PATH
-from hypernode_vagrant_runner.utils import write_output_to_stdout
 
 try:
     # Import quote from shlex in case of python 3
@@ -57,9 +56,8 @@ def run_command_in_vagrant(command_to_run, vagrant_info,
     )
     try:
         check_call(ssh_wrapper_command, shell=True, stdout=stdout, bufsize=1)
-    except CalledProcessError as e:
+    except CalledProcessError:
         log.info("Running command in Vagrant exited nonzero")
-        write_output_to_stdout(e.output)
 
 
 def get_remote_shell(vagrant_info, ssh_user=HYPERNODE_VAGRANT_DEFAULT_USER):
