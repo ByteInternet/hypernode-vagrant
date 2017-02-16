@@ -1,3 +1,5 @@
+from sys import stdout
+
 from mock import Mock
 from subprocess import CalledProcessError
 
@@ -16,8 +18,8 @@ class TestRunCommandInVagrant(TestCase):
             'Port': '2222',
             'IdentityFile': '/tmp/tmpZrTKrM/.vagrant/machines/hypernode/virtualbox/private_key'
         }
-        self.run_local_command = self.set_up_patch(
-            'hypernode_vagrant_runner.runner.remote_command.run_local_command'
+        self.check_call = self.set_up_patch(
+            'hypernode_vagrant_runner.runner.remote_command.check_call'
         )
         self.write_output_to_stdout = self.set_up_patch(
             'hypernode_vagrant_runner.runner.remote_command.write_output_to_stdout'
@@ -45,8 +47,9 @@ class TestRunCommandInVagrant(TestCase):
     def test_run_command_in_vagrant_runs_local_command(self):
         run_command_in_vagrant('bash runtests.sh', self.vagrant_ssh_config)
 
-        self.run_local_command.assert_called_once_with(
-            self.wrap_ssh_call.return_value, shell=True
+        self.check_call.assert_called_once_with(
+            self.wrap_ssh_call.return_value, shell=True,
+            stdout=stdout, bufsize=1
         )
 
     def test_run_command_does_not_write_error_output_to_stdout_if_no_error(self):
@@ -57,7 +60,7 @@ class TestRunCommandInVagrant(TestCase):
     def test_run_command_writes_error_output_to_stdout_if_error(self):
         self.output = Mock()
 
-        self.run_local_command.side_effect = CalledProcessError(
+        self.check_call.side_effect = CalledProcessError(
             1, 'bash runtests.sh', output=self.output
         )
 
