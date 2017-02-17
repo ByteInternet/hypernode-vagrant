@@ -5,7 +5,7 @@ require 'fileutils'
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
-VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.5"
+VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.6"
 
 # if vagrant-hypconfigmgmt is not installed, install it and abort
 if !Vagrant.has_plugin?("vagrant-hypconfigmgmt", version = VAGRANT_HYPCONFIGMGMT_VERSION) && !ARGV.include?("plugin")
@@ -26,6 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
 
   begin
+    settings['hostmanager']['default_domain'] ||= 'hypernode.local'
     config.vm.box = settings['vagrant']['box'] ||= 'hypernode_php7'
     config.vm.box_url = settings['vagrant']['box_url'] ||= 'http://vagrant.hypernode.com/customer/php7/catalog.json'
 
@@ -69,7 +70,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
            -v #{settings['varnish']['state']} \
            -f #{settings['firewall']['state']} \
            -c #{settings['cgroup']['state']} \
-           -x #{settings['xdebug']['state']}"
+           -x #{settings['xdebug']['state']} \
+           -d #{settings['hostmanager']['default_domain']}" \
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"
@@ -120,7 +122,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         hypernode_host = hypernode_host.empty? ? 'hypernode' : hypernode_host
         hypernode_host = hypernode_host.split('-')[0]
 
-        directory_alias = hypernode_host + ".hypernode.local"
+        directory_alias = hypernode_host + "." + settings['hostmanager']['default_domain']
 
         # The directory and parent directory don't have to be unique names. You
         # could have this Vagrantfile in two subdirs each named 'mytestshop' and
@@ -130,10 +132,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         # collisions) with the hash of that path.
         require 'digest/sha1'
         hostname_hash = Digest::SHA1.hexdigest(Dir.pwd).slice(0..5)
-        directory_hash_alias = hostname_hash + ".hypernode.local"
+        directory_hash_alias = hostname_hash + "." + settings['hostmanager']['default_domain']
 
         # set the machine hostname
-        node.vm.hostname = hostname_hash + "-" + hypernode_host + "-magweb-vgr.nodes.hypernode.local"
+        node.vm.hostname = hostname_hash + "-" + hypernode_host + "-magweb-vgr.nodes." + settings['hostmanager']['default_domain']
 
         # Here you can define your own aliases for in the hosts file.
         # note: if you have more than one hypernode-vagrant checkout up and

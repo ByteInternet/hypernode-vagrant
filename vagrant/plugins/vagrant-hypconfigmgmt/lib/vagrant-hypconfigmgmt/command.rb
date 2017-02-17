@@ -19,6 +19,8 @@ AVAILABLE_CGROUP_STATES = [true, false]
 DEFAULT_XDEBUG_STATE = false
 AVAILABLE_XDEBUG_STATES = [true, false]
 
+DEFAULT_DOMAIN = 'hypernode.local'
+
 # paths to local settings file
 H_V_SETTINGS_FILE = "local.yml"
 H_V_BASE_SETTINGS_FILE = ".local.base.yml"
@@ -287,6 +289,13 @@ HEREDOC
       update_settings(settings)
     end
 
+
+    def ensure_default_domain_configured(env)
+      settings = retrieve_settings()
+      settings['hostmanager']['default_domain'] ||= DEFAULT_DOMAIN
+      update_settings(settings)
+    end
+
       
     def ensure_firewall_disabled_for_incompatible_fs_types(env)
       settings = retrieve_settings()
@@ -373,6 +382,12 @@ HEREDOC
       ensure_setting_exists('vagrant')
       ensure_vagrant_box_type_configured(env)
     end
+
+
+    def configure_hostmanager(env)
+      ensure_setting_exists('hostmanager')
+      ensure_default_domain_configured(env)
+    end
     
     
     def ensure_settings_configured(env)
@@ -385,6 +400,7 @@ HEREDOC
       configure_cgroup(env)
       configure_xdebug(env)
       configure_vagrant(env)
+      configure_hostmanager(env)
       new_settings = retrieve_settings()
       return new_settings.to_yaml != old_settings.to_yaml
     end
