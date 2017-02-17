@@ -3,7 +3,7 @@
 
 set -e
 
-while getopts "m:v:f:c:x:" opt; do
+while getopts "m:v:f:c:x:d:" opt; do
     case "$opt" in
         m)
             magento_version="$OPTARG" ;;
@@ -15,6 +15,8 @@ while getopts "m:v:f:c:x:" opt; do
             cgroup_enabled="$OPTARG" ;;
         x)
             xdebug_enabled="$OPTARG" ;;
+        d)
+            default_domain="$OPTARG" ;;
     esac
 done
 
@@ -154,4 +156,4 @@ touch "$homedir/.ssh/authorized_keys"
 
 echo "Your hypernode-vagrant is ready! Log in with:"
 echo "ssh app@hypernode.local -oStrictHostKeyChecking=no -A"
-echo "Or visit http://$(echo `hostname` | cut -d'-' -f2).hypernode.local in your browser"
+echo "Or visit http://$(echo `hostname` | cut -d'-' -f2).$default_domain in your browser"

@@ -19,6 +19,8 @@ AVAILABLE_CGROUP_STATES = [true, false]
 DEFAULT_XDEBUG_STATE = false
 AVAILABLE_XDEBUG_STATES = [true, false]
 
+DEFAULT_DOMAIN = 'hypernode.local'
+
 # paths to local settings file
 H_V_SETTINGS_FILE = "local.yml"
 H_V_BASE_SETTINGS_FILE = ".local.base.yml"
@@ -269,16 +271,28 @@ HEREDOC
 
     def ensure_vagrant_box_type_configured(env)
       settings = retrieve_settings()
-      case settings['php']['version']
-        when 5.5
-          env[:ui].info("Will use PHP 5.5. If you want PHP 7 instead change the php version in local.yml.")
-          settings['vagrant']['box'] = 'hypernode_php5'
-          settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/php5/catalog.json'
-        when 7.0
-          env[:ui].info("Will use PHP 7. If you want PHP 5.5 instead change the php version in local.yml.")
-          settings['vagrant']['box'] = 'hypernode_php7'
-          settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/php7/catalog.json'
+      if settings['ubuntu_version'] == 'xenial'
+        settings['vagrant']['box'] = 'hypernode'
+        settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/xenial/catalog.json'
+      else
+        case settings['php']['version']
+          when 5.5
+            env[:ui].info("Will use PHP 5.5. If you want PHP 7 instead change the php version in local.yml.")
+            settings['vagrant']['box'] = 'hypernode_php5'
+            settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/php5/catalog.json'
+          when 7.0
+            env[:ui].info("Will use PHP 7. If you want PHP 5.5 instead change the php version in local.yml.")
+            settings['vagrant']['box'] = 'hypernode_php7'
+            settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/php7/catalog.json'
+        end
       end
+      update_settings(settings)
+    end
+
+
+    def ensure_default_domain_configured(env)
+      settings = retrieve_settings()
+      settings['hostmanager']['default_domain'] ||= DEFAULT_DOMAIN
       update_settings(settings)
     end
 
@@ -368,6 +382,12 @@ HEREDOC
       ensure_setting_exists('vagrant')
       ensure_vagrant_box_type_configured(env)
     end
+
+
+    def configure_hostmanager(env)
+      ensure_setting_exists('hostmanager')
+      ensure_default_domain_configured(env)
+    end
     
     
     def ensure_settings_configured(env)
@@ -380,6 +400,7 @@ HEREDOC
       configure_cgroup(env)
       configure_xdebug(env)
       configure_vagrant(env)
+      configure_hostmanager(env)
       new_settings = retrieve_settings()
       return new_settings.to_yaml != old_settings.to_yaml
     end

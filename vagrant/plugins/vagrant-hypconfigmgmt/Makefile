@@ -10,7 +10,7 @@ all:
 test:
 	bundle exec rspec spec/
 install:
-	find pkg/ -name '*.gem' | head -n 1 | xargs vagrant plugin install
+	find pkg/ -name '*.gem' | tail -n 1 | xargs vagrant plugin install
 clean:
 	git clean -xfd
 

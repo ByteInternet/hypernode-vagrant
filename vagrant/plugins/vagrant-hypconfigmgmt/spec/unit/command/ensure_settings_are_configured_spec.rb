@@ -49,6 +49,8 @@ describe VagrantHypconfigmgmt::Command do
         expect(subject).to receive(:configure_xdebug).with(env)
 	# check the vagrant settings are configured
         expect(subject).to receive(:configure_vagrant).with(env)
+	# check the hostmanager settings are configured
+        expect(subject).to receive(:configure_hostmanager).with(env)
 	# check true is returned when settings are updated
 	expect( subject.ensure_settings_configured(env) ).to eq(true)
       end
@@ -74,6 +76,8 @@ describe VagrantHypconfigmgmt::Command do
         expect(subject).to receive(:configure_xdebug).with(env)
 	# check the vagrant settings are configured
         expect(subject).to receive(:configure_vagrant).with(env)
+	# check the hostmanager settings are configured
+        expect(subject).to receive(:configure_hostmanager).with(env)
 	# check false is returned when settings are not updated
 	expect( subject.ensure_settings_configured(env) ).to eq(false)
       end
