@@ -18,7 +18,8 @@ class TestStartHypernodeVagrant(TestCase):
         self.write_hypernode_vagrant_configuration.assert_called_once_with(
             '/tmp/tmpdir1234',
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
-            xdebug_enabled=False
+            xdebug_enabled=False,
+            xenial=False
         )
 
     def test_start_hypernode_vagrant_writes_hypernode_vagrant_configuration_for_specified_php_version(self):
@@ -27,7 +28,8 @@ class TestStartHypernodeVagrant(TestCase):
         self.write_hypernode_vagrant_configuration.assert_called_once_with(
             '/tmp/tmpdir1234',
             php_version='5.5',
-            xdebug_enabled=False
+            xdebug_enabled=False,
+            xenial=False
         )
 
     def test_start_hypernode_vagrant_writes_hypernode_vagrant_configuration_with_xdebug_enabled_if_specified(self):
@@ -36,7 +38,18 @@ class TestStartHypernodeVagrant(TestCase):
         self.write_hypernode_vagrant_configuration.assert_called_once_with(
             '/tmp/tmpdir1234',
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
-            xdebug_enabled=True
+            xdebug_enabled=True,
+            xenial=False
+        )
+
+    def test_start_hypernode_vagrant_writes_hypernode_vagrant_configuration_with_xenial_if_specified(self):
+        start_hypernode_vagrant('/tmp/tmpdir1234', xenial=True)
+
+        self.write_hypernode_vagrant_configuration.assert_called_once_with(
+            '/tmp/tmpdir1234',
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=False,
+            xenial=True
         )
 
     def test_start_hypernode_vagrant_runs_vagrant_up(self):

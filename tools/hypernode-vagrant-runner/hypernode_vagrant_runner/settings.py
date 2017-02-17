@@ -15,6 +15,8 @@ HYPERNODE_VAGRANT_BOX_URLS = {
     '5.5': 'http://vagrant.hypernode.com/customer/php5/catalog.json',
     '7.0': 'http://vagrant.hypernode.com/customer/php7/catalog.json',
 }
+HYPERNODE_XENIAL_BOX_NAME = 'hypernode'
+HYPERNODE_XENIAL_URL = 'http://vagrant.hypernode.com/customer/xenial/catalog.json'
 
 # Run the commands as 'app' by default. This is the user that is
 # available on production Hypernodes.
@@ -49,6 +51,7 @@ xdebug:
 vagrant:
   box: {box_name}
   box_url: {box_url}
+ubuntu_version: {ubuntu_version}
 """
 
 # The path in the vagrant where the project will be uploaded to
