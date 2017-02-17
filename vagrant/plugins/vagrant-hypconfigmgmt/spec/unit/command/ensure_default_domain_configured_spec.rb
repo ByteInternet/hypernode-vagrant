@@ -7,14 +7,7 @@ require "vagrant-hypconfigmgmt/command"
 describe VagrantHypconfigmgmt::Command do
   # create a fake app and env to pass into the VagrantHypconfigmgmt::Command constructor
   let(:app) { }
-  let(:env) { { :ui => ui } }
-
-  # pretend env contains the Vagrant ui element
-  let(:ui) do
-    double('ui').tap do |ui|
-      allow(ui).to receive(:info) { nil }
-    end
-  end
+  let(:env) { { } }
 
   # Call the method under test after every 'it'. Similar to setUp in Python TestCase
   after do
@@ -28,11 +21,11 @@ describe VagrantHypconfigmgmt::Command do
   describe "#ensure_default_domain_configured" do
 
     context "when a default domain is configured" do
-      let(:retrieved_settings) { { "hostmanager" => { "default_domain" => "exaxmple.com" } } }
+      let(:retrieved_settings) { { "hostmanager" => { "default_domain" => "example.com" } } }
       it "does not change the retrieved settings" do
-	# check if settings are retrieved from disk and pretend they return a configuration for domain configured
+        # check if settings are retrieved from disk and pretend they return a configuration for domain configured
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
-	# check if the settings that are written back to disk contain the same data
+        # check if the settings that are written back to disk contain the same data
         expect(subject).to receive(:update_settings).once.with(retrieved_settings)
       end
     end
@@ -40,15 +33,15 @@ describe VagrantHypconfigmgmt::Command do
     context "when no default domain is configured" do
       let(:retrieved_settings) { { "hostmanager" => Hash.new } }
       it "sets the default domain to the default domain" do
-	expected_settings = { 
+      expected_settings = { 
           "hostmanager" => { 
-	    "default_domain" => "hypernode.local"
-	  }
-	}
-	# check if settings are retrieved from disk and pretend they return a configuration for domain not configured
-        expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
-	# check if the settings that are written back to disk contain the default domain
-        expect(subject).to receive(:update_settings).once.with(expected_settings)
+          "default_domain" => "hypernode.local"
+        }
+      }
+      # check if settings are retrieved from disk and pretend they return a configuration for domain not configured
+      expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+      # check if the settings that are written back to disk contain the default domain
+      expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
     end
   end
