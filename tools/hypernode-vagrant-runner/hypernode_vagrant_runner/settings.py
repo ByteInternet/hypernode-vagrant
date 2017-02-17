@@ -36,6 +36,7 @@ fs:
   type: rsync
 hostmanager:
   extra-aliases: []
+  default_domain: hypernode.local
 magento:
   version: 1
 php:
