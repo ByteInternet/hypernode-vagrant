@@ -103,5 +103,6 @@ def start_runner():
         ssh_user=args.user,
         xdebug_enabled=args.enable_xdebug,
         skip_try_sudo=args.skip_try_sudo,
-        xenial=args.xenial
+        xenial=args.xenial,
+        no_provision=args.no_provision
     )
