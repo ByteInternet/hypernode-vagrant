@@ -64,7 +64,8 @@ class TestCreateHypernodeVagrant(TestCase):
             self.ensure_directory_for_checkout.return_value,
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             xdebug_enabled=False,
-            xenial=False
+            xenial=False,
+            no_provision=False
         )
 
     def test_create_hypernode_vagrant_starts_hypernode_vagrant_with_specified_php_version(self):
@@ -74,7 +75,8 @@ class TestCreateHypernodeVagrant(TestCase):
             self.ensure_directory_for_checkout.return_value,
             php_version='5.5',
             xdebug_enabled=False,
-            xenial=False
+            xenial=False,
+            no_provision=False
         )
 
     def test_create_hypernode_vagrant_starts_hypernode_vagrant_with_xdebug_installed_if_specified(self):
@@ -84,7 +86,8 @@ class TestCreateHypernodeVagrant(TestCase):
             self.ensure_directory_for_checkout.return_value,
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             xdebug_enabled=True,
-            xenial=False
+            xenial=False,
+            no_provision=False
         )
 
     def test_create_hypernode_vagrant_starts_hypernode_vagrant_with_xenial_image_if_specified(self):
@@ -94,7 +97,19 @@ class TestCreateHypernodeVagrant(TestCase):
             self.ensure_directory_for_checkout.return_value,
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             xdebug_enabled=False,
-            xenial=True
+            xenial=True,
+            no_provision=False
+        )
+
+    def test_create_hypernode_vagrant_starts_hypernode_vagrant_without_provisioning_if_specified(self):
+        create_hypernode_vagrant(no_provision=True)
+
+        self.start_hypernode_vagrant.assert_called_once_with(
+            self.ensure_directory_for_checkout.return_value,
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=False,
+            xenial=False,
+            no_provision=True
         )
 
     def test_create_hypernode_vagrant_returns_ensured_directory(self):

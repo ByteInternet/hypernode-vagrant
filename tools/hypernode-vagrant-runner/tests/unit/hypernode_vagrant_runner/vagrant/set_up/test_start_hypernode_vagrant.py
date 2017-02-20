@@ -56,5 +56,12 @@ class TestStartHypernodeVagrant(TestCase):
         start_hypernode_vagrant('/tmp/tmpdir1234')
 
         self.run_vagrant_up.assert_called_once_with(
-            '/tmp/tmpdir1234'
+            '/tmp/tmpdir1234', no_provision=False
+        )
+
+    def test_start_hypernode_vagrant_runs_vagrant_up_with_no_provision_if_specified(self):
+        start_hypernode_vagrant('/tmp/tmpdir1234', no_provision=True)
+
+        self.run_vagrant_up.assert_called_once_with(
+            '/tmp/tmpdir1234', no_provision=True
         )

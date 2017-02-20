@@ -29,5 +29,6 @@ class TestStartRunner(TestCase):
             ssh_user=self.args.user,
             xdebug_enabled=self.args.enable_xdebug,
             skip_try_sudo=self.args.skip_try_sudo,
-            xenial=self.args.xenial
+            xenial=self.args.xenial,
+            no_provision=self.args.no_provision
         )

@@ -25,7 +25,8 @@ class TestHypernodeVagrant(TestCase):
                 php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
                 xdebug_enabled=False,
                 skip_try_sudo=False,
-                xenial=False
+                xenial=False,
+                no_provision=False
             )
 
     def test_hypernode_vagrant_creates_hypernode_vagrant_using_specified_checkout(self):
@@ -37,7 +38,8 @@ class TestHypernodeVagrant(TestCase):
                 php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
                 xdebug_enabled=False,
                 skip_try_sudo=False,
-                xenial=False
+                xenial=False,
+                no_provision=False
             )
 
     def test_hypernode_vagrant_creates_hypernode_vagrant_of_specified_php_version(self):
@@ -47,7 +49,8 @@ class TestHypernodeVagrant(TestCase):
                 php_version='7.0',
                 xdebug_enabled=False,
                 skip_try_sudo=False,
-                xenial=False
+                xenial=False,
+                no_provision=False
             )
 
     def test_hypernode_vagrant_creates_hypernode_vagrant_with_xdebug_enabled_if_specified(self):
@@ -57,7 +60,8 @@ class TestHypernodeVagrant(TestCase):
                 php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
                 xdebug_enabled=True,
                 skip_try_sudo=False,
-                xenial=False
+                xenial=False,
+                no_provision=False
             )
 
     def test_hypernode_vagrant_creates_hypernode_vagrant_with_xenial_image_if_specified(self):
@@ -67,7 +71,8 @@ class TestHypernodeVagrant(TestCase):
                 php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
                 xdebug_enabled=False,
                 skip_try_sudo=False,
-                xenial=True
+                xenial=True,
+                no_provision=False
             )
 
     def test_hypernode_vagrant_skips_try_sudo_if_specified(self):
@@ -77,7 +82,19 @@ class TestHypernodeVagrant(TestCase):
                 php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
                 xdebug_enabled=False,
                 skip_try_sudo=True,
-                xenial=False
+                xenial=False,
+                no_provision=False
+            )
+
+    def test_hypernode_vagrant_skips_provisioning_if_specified(self):
+        with hypernode_vagrant(no_provision=True):
+            self.create_hypernode_vagrant.assert_called_once_with(
+                directory=None,
+                php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+                xdebug_enabled=False,
+                skip_try_sudo=False,
+                xenial=False,
+                no_provision=True
             )
 
     def test_hypernode_vagrant_destroys_hypernode_vagrant_after_context(self):

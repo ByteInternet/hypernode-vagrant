@@ -80,6 +80,11 @@ def parse_start_runner_arguments():
         action='store_true',
         help='Start a Xenial Hypernode (PRE-ALPHA)'
     )
+    parser.add_argument(
+        '--no-provision',
+        action='store_true',
+        help='Run "vagrant up" with the --no-provision flag'
+    )
     return parse_arguments(parser)
 
 

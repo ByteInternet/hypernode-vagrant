@@ -30,7 +30,8 @@ class TestLaunchRunner(TestCase):
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             xdebug_enabled=False,
             skip_try_sudo=False,
-            xenial=False
+            xenial=False,
+            no_provision=False
         )
 
     def test_launch_runner_uses_hypernode_vagrant_context_from_specified_pre_existing_checkout(self):
@@ -43,7 +44,8 @@ class TestLaunchRunner(TestCase):
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             xdebug_enabled=False,
             skip_try_sudo=False,
-            xenial=False
+            xenial=False,
+            no_provision=False
         )
 
     def test_launch_runner_uses_hypernode_vagrant_context_with_specific_php_version(self):
@@ -56,7 +58,8 @@ class TestLaunchRunner(TestCase):
             php_version='5.5',
             xdebug_enabled=False,
             skip_try_sudo=False,
-            xenial=False
+            xenial=False,
+            no_provision=False
         )
 
     def test_launch_runner_uses_hypernode_vagrant_context_with_xdebug_enabled_if_specified(self):
@@ -69,7 +72,22 @@ class TestLaunchRunner(TestCase):
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             xdebug_enabled=True,
             skip_try_sudo=False,
-            xenial=False
+            xenial=False,
+            no_provision=False
+        )
+
+    def test_launch_runner_uses_hypernode_vagrant_context_with_skipped_provisioning_if_specified(self):
+        launch_runner(
+            no_provision=True
+        )
+
+        self.hypernode_vagrant.assert_called_once_with(
+            directory=None,
+            php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
+            xdebug_enabled=False,
+            skip_try_sudo=False,
+            xenial=False,
+            no_provision=True
         )
 
     def test_launch_runner_uses_hypernode_vagrant_context_with_xenial_image_if_specified(self):
@@ -82,7 +100,8 @@ class TestLaunchRunner(TestCase):
             php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
             xdebug_enabled=False,
             skip_try_sudo=False,
-            xenial=True
+            xenial=True,
+            no_provision=False
         )
 
     def test_launch_runner_runs_project_command_in_context(self):
