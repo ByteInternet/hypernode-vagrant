@@ -38,7 +38,22 @@ class TestRunProjectCommandInVagrant(TestCase):
 
         self.upload_project_to_vagrant.assert_called_once_with(
             '/home/some_user/code/projects/hypernode-magerun',
-            self.vagrant_ssh_config
+            self.vagrant_ssh_config,
+            ssh_user=HYPERNODE_VAGRANT_DEFAULT_USER
+        )
+
+    def test_run_project_command_in_vagrant_uploads_project_to_vagrant_as_specified_user(self):
+        run_project_command_in_vagrant(
+            project_path='/home/some_user/code/projects/hypernode-magerun',
+            command_to_run=None,
+            vagrant_info=self.vagrant_ssh_config,
+            ssh_user='root'
+        )
+
+        self.upload_project_to_vagrant.assert_called_once_with(
+            '/home/some_user/code/projects/hypernode-magerun',
+            self.vagrant_ssh_config,
+            ssh_user='root'
         )
 
     def test_run_project_command_in_vagrant_gets_remote_shell_if_no_command_specified(self):

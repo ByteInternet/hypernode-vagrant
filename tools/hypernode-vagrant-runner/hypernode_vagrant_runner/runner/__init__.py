@@ -30,11 +30,15 @@ def run_project_command_in_vagrant(project_path, command_to_run, vagrant_info,
     """
     # If a project path was specified, upload that directory
     if project_path:
-        upload_project_to_vagrant(project_path, vagrant_info)
+        upload_project_to_vagrant(
+            project_path, vagrant_info, ssh_user=ssh_user
+        )
 
     if command_to_run:
         # If a command was specified run that command
-        run_command_in_vagrant(command_to_run, vagrant_info, ssh_user=ssh_user)
+        run_command_in_vagrant(
+            command_to_run, vagrant_info, ssh_user=ssh_user
+        )
     else:
         # Otherwise log in to the remote machine and return control to the user
         get_remote_shell(vagrant_info, ssh_user=ssh_user)
