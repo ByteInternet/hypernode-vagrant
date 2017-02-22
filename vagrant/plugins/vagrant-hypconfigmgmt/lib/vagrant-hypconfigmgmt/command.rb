@@ -272,7 +272,7 @@ HEREDOC
     def ensure_vagrant_box_type_configured(env)
       settings = retrieve_settings()
       if settings['ubuntu_version'] == 'xenial'
-        settings['vagrant']['box'] = 'hypernode'
+        settings['vagrant']['box'] = 'hypernode_xenial'
         settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/xenial/catalog.json'
       else
         case settings['php']['version']
