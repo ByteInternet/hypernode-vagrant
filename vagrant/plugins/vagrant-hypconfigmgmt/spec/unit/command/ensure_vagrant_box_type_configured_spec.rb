@@ -75,7 +75,7 @@ describe VagrantHypconfigmgmt::Command do
 	    "version" => 7.0
 	  }, 
 	  "vagrant" => { 
-	    "box" => "hypernode", 
+	    "box" => "hypernode_xenial", 
 	    "box_url" => "http://vagrant.hypernode.com/customer/xenial/catalog.json" 
 	  } 
 	}
@@ -134,7 +134,7 @@ describe VagrantHypconfigmgmt::Command do
 	    "version" => 5.5 
 	  }, 
 	  "vagrant" => { 
-	    "box" => "hypernode", 
+	    "box" => "hypernode_xenial", 
 	    "box_url" => "http://vagrant.hypernode.com/customer/xenial/catalog.json" 
 	  } 
 	}

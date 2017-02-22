@@ -75,6 +75,16 @@ def parse_start_runner_arguments():
         choices=HYPERNODE_VAGRANT_USERS,
         default=HYPERNODE_VAGRANT_DEFAULT_USER
     )
+    parser.add_argument(
+        '--xenial',
+        action='store_true',
+        help='Start a Xenial Hypernode (PRE-ALPHA)'
+    )
+    parser.add_argument(
+        '--no-provision',
+        action='store_true',
+        help='Run "vagrant up" with the --no-provision flag'
+    )
     return parse_arguments(parser)
 
 
@@ -92,5 +102,7 @@ def start_runner():
         php_version=args.php,
         ssh_user=args.user,
         xdebug_enabled=args.enable_xdebug,
-        skip_try_sudo=args.skip_try_sudo
+        skip_try_sudo=args.skip_try_sudo,
+        xenial=args.xenial,
+        no_provision=args.no_provision
     )

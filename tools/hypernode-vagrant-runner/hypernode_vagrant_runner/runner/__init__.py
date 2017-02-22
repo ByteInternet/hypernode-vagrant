@@ -30,11 +30,15 @@ def run_project_command_in_vagrant(project_path, command_to_run, vagrant_info,
     """
     # If a project path was specified, upload that directory
     if project_path:
-        upload_project_to_vagrant(project_path, vagrant_info)
+        upload_project_to_vagrant(
+            project_path, vagrant_info, ssh_user=ssh_user
+        )
 
     if command_to_run:
         # If a command was specified run that command
-        run_command_in_vagrant(command_to_run, vagrant_info, ssh_user=ssh_user)
+        run_command_in_vagrant(
+            command_to_run, vagrant_info, ssh_user=ssh_user
+        )
     else:
         # Otherwise log in to the remote machine and return control to the user
         get_remote_shell(vagrant_info, ssh_user=ssh_user)
@@ -74,7 +78,8 @@ def launch_runner(project_path=None, command_to_run=None,
                   run_once=False, directory=None,
                   php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
                   ssh_user=HYPERNODE_VAGRANT_DEFAULT_USER,
-                  xdebug_enabled=False, skip_try_sudo=False):
+                  xdebug_enabled=False, skip_try_sudo=False,
+                  xenial=False, no_provision=False):
     """
     Run the hook inside an ephemeral hypernode-vagrant context
     :param str project_path: The project path to upload to the vagrant before
@@ -89,11 +94,14 @@ def launch_runner(project_path=None, command_to_run=None,
     :param str ssh_user: The SSH user to use to run the hook as
     :param bool xdebug_enabled: Install xdebug in the vagrant
     :param bool skip_try_sudo: Skip try to sudo beforehand to fail early
+    ;param bool xenial: Start a Xenial image
+    :param bool no_provision: Pass --no-provision to vagrant up
     :return None:
     """
     with hypernode_vagrant(
             directory=directory, php_version=php_version,
-            xdebug_enabled=xdebug_enabled, skip_try_sudo=skip_try_sudo
+            xdebug_enabled=xdebug_enabled, skip_try_sudo=skip_try_sudo,
+            xenial=xenial, no_provision=no_provision
     ) as info:
         runner = run_project_command_in_vagrant if \
             run_once or not command_to_run else loop_run_project_command_in_vagrant

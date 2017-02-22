@@ -27,7 +27,7 @@ class TestParseStartRunnerArguments(TestCase):
             self.argument_parser.return_value
         )
 
-    def test_parse_start_runner_adds_run_once_flag_with_default_true(self):
+    def test_parse_start_runner_adds_run_once_flag_with_default_false(self):
         parse_start_runner_arguments()
 
         expected_call = call(
@@ -124,6 +124,19 @@ class TestParseStartRunnerArguments(TestCase):
             help=ANY,
             choices=HYPERNODE_VAGRANT_USERS,
             default=HYPERNODE_VAGRANT_DEFAULT_USER
+        )
+        self.assertIn(
+            expected_call,
+            self.argument_parser.return_value.add_argument.mock_calls
+        )
+
+    def test_parse_start_runner_adds_xenial_flag_with_default_false(self):
+        parse_start_runner_arguments()
+
+        expected_call = call(
+            '--xenial',
+            action='store_true',
+            help=ANY
         )
         self.assertIn(
             expected_call,

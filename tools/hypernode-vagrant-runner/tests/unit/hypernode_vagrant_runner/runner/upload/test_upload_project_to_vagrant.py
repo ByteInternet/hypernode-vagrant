@@ -1,4 +1,5 @@
 from hypernode_vagrant_runner.runner import upload_project_to_vagrant
+from hypernode_vagrant_runner.settings import HYPERNODE_VAGRANT_DEFAULT_USER
 from tests.testcase import TestCase
 
 
@@ -25,7 +26,7 @@ class TestUploadProjectToVagrant(TestCase):
                            "-oStrictHostKeyChecking=no " \
                            "-oUserKnownHostsFile=/dev/null' " \
                            "/home/some_user/code/projects/hypernode_vagrant_runner/* " \
-                           "root@127.0.0.1:/data/web/public"
+                           "{}@127.0.0.1:/data/web/public".format(HYPERNODE_VAGRANT_DEFAULT_USER)
         self.run_local_command.assert_called_once_with(
             expected_command, shell=True
         )
@@ -45,4 +46,26 @@ class TestUploadProjectToVagrant(TestCase):
             'The destination path was not in the rsync command. If the '
             'files are not uploaded to the webroot they will not be accessible '
             'over the webserver with the default configuration.'
+        )
+
+    def test_upload_project_to_vagrant_runs_upload_as_the_specified_user(self):
+        upload_project_to_vagrant(
+            project_path='/home/some_user/code/projects/hypernode_vagrant_runner',
+            vagrant_info=self.vagrant_ssh_config,
+            ssh_user='root'
+        )
+
+        expected_command = "rsync -avz --delete -e " \
+                           "'ssh -p 2222 " \
+                           "-i /tmp/tmpZrTKrM/.vagrant/machines/hypernode/virtualbox/private_key " \
+                           "-oStrictHostKeyChecking=no " \
+                           "-oUserKnownHostsFile=/dev/null' " \
+                           "/home/some_user/code/projects/hypernode_vagrant_runner/* " \
+                           "root@127.0.0.1:/data/web/public"
+        self.run_local_command.assert_called_once_with(
+            expected_command, shell=True
+        )
+        self.assertIn(
+            'root@127.0.0.1', expected_command,
+            "Not rsyncing the files as the specified user (root)"
         )
