@@ -1,0 +1,13 @@
+## Rewrite or redirect portions of your site here.
+
+# Redirect based on http host:
+# if ($http_host ~ ^(www\.)?my-old-domain.com ) {
+#	rewrite  (.*)  http://www.my-new-domain.com/landingpage.html permanent;
+# }
+
+
+# Redirect old sub-urls:
+# rewrite ^/oldpage/that_doesnt_exist_anymore.html$ http://www.mydomain.com/new_age.html permanent;
+
+# Rewrite path:
+# rewrite ^/some-fancy-url$ /not-so/fancy/url.php last;

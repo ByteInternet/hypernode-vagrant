@@ -1,0 +1,22 @@
+## Use this file to connect domainnames with storefronts.
+## By default, these variables are unset and logic in Magento's
+## index.php will take over.
+##
+## Use this file if you do not want to hack index.php. Follow the
+## commented examples.
+
+# should be named runcode :)
+#map $http_host $storecode {
+#  hostnames;
+#  default mydefault_storecode;
+#  .yourshopA.com shop_a;
+#  .yourshopB.com shop_b;
+#}
+
+# should be named runtype :)
+#map $http_host $storetype {
+#  hostnames;
+#  default store;
+#  .yourshopA.com website;
+#  .yourshopB.com store;
+#}

@@ -1,0 +1,7 @@
+## Block these IP's from using your site. They should have proper CIDR notation.
+## It is not possible to include host/domainnames here.
+
+# deny 62.195.123.45;
+deny 87.211.184.188;
+# deny 213.186.119.0/24;
+# deny 213.186.120.0/24;
