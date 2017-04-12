@@ -27,10 +27,11 @@ describe VagrantHypconfigmgmt::Command do
   # the method that we are going to test
   describe "#ensure_vagrant_box_type_configured" do
 
-    context "when php 7.0 is configured" do
+    context "when php 7.0 is configured but no ubuntu version specified" do
       let(:retrieved_settings) { { "php" => { "version" => 7.0 }, "vagrant" => Hash.new } }
       it "sets the box name and box url to the right values for PHP 7.0" do
 	expected_settings = { 
+          "ubuntu_version" => "precise",
           "php" => { 
 	    "version" => 7.0
 	  }, 
@@ -41,6 +42,8 @@ describe VagrantHypconfigmgmt::Command do
 	}
 	# check if settings are retrieved from disk and pretend they return a configuration for php 7.0
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is gotten and pretend it returns precise
+	expect(subject).to receive(:get_ubuntu_version).once.with(env).and_return('precise')
 	# check if the settings that are written back to disk contain the right box (name) and box_url
         expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
@@ -61,6 +64,8 @@ describe VagrantHypconfigmgmt::Command do
 	}
 	# check if settings are retrieved from disk and pretend they return a configuration for php 7.0
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is not gotten because we already have it specified in the settings
+	expect(subject).to receive(:get_ubuntu_version).never
 	# check if the settings that are written back to disk contain the right box (name) and box_url
         expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
@@ -81,15 +86,18 @@ describe VagrantHypconfigmgmt::Command do
 	}
 	# check if settings are retrieved from disk and pretend they return a configuration for php 7.0
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is not gotten because we already have it specified in the settings
+	expect(subject).to receive(:get_ubuntu_version).never
 	# check if the settings that are written back to disk contain the right box (name) and box_url
         expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
     end
 
-    context "when php 5.5 is configured" do
+    context "when php 5.5 is configured but no ubuntu version specified" do
       let(:retrieved_settings) { { "php" => { "version" => 5.5 }, "vagrant" => Hash.new } }
       it "sets the box name and box url to the right values for PHP 5.5" do
 	expected_settings = { 
+          "ubuntu_version" => "precise",
           "php" => { 
 	    "version" => 5.5 
 	  }, 
@@ -100,6 +108,8 @@ describe VagrantHypconfigmgmt::Command do
 	}
 	# check if settings are retrieved from disk and pretend they return a configuration for php 5.5
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is gotten and pretend it returns precise
+	expect(subject).to receive(:get_ubuntu_version).once.with(env).and_return('precise')
 	# check if the settings that are written back to disk contain the right box (name) and box_url
         expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
@@ -120,6 +130,8 @@ describe VagrantHypconfigmgmt::Command do
 	}
 	# check if settings are retrieved from disk and pretend they return a configuration for php 5.5
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is not gotten because we already have it specified in the settings
+	expect(subject).to receive(:get_ubuntu_version).never
 	# check if the settings that are written back to disk contain the right box (name) and box_url
         expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
@@ -140,6 +152,8 @@ describe VagrantHypconfigmgmt::Command do
 	}
 	# check if settings are retrieved from disk and pretend they return a configuration for php 5.5
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is not gotten because we already have it specified in the settings
+	expect(subject).to receive(:get_ubuntu_version).never
 	# check if the settings that are written back to disk contain the right box (name) and box_url
         expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
@@ -148,18 +162,29 @@ describe VagrantHypconfigmgmt::Command do
     context "when an unknown php version is configured" do
       let(:retrieved_settings) { { "php" => { "version" => 1.0 }, "vagrant" => Hash.new } }
       it "does not set the box name and box url" do
+	expected_settings = { 
+          "ubuntu_version" => "precise",
+          "php" => { 
+	    "version" => 1.0
+	  }, 
+	  "vagrant" => Hash.new
+	}
 	# check if settings are retrieved from disk and pretend they return an invalid php version
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is gotten and pretend it returns precise
+	expect(subject).to receive(:get_ubuntu_version).once.with(env).and_return('precise')
 	# check if the settings we write back to disk have an unaltered box (name) and box_url
-        expect(subject).to receive(:update_settings).once.with(retrieved_settings)
+        expect(subject).to receive(:update_settings).once.with(expected_settings)
       end
     end
 
-    context "when an unknown php version is configured and xenial ubuntu vreesion specified" do
+    context "when an unknown php version is configured and xenial ubuntu version specified" do
       let(:retrieved_settings) { { "php" => { "version" => 1.0 }, "vagrant" => Hash.new, "ubuntu_version" => "xenial" } }
       it "does not set the box name and box url" do
 	# check if settings are retrieved from disk and pretend they return an invalid php version
         expect(subject).to receive(:retrieve_settings).once.with(no_args).and_return(retrieved_settings)
+	# check if the ubuntu version is not gotten because we already have it specified in the settings
+	expect(subject).to receive(:get_ubuntu_version).never
 	# check if the settings we write back to disk have an unaltered box (name) and box_url
         expect(subject).to receive(:update_settings).once.with(retrieved_settings)
       end

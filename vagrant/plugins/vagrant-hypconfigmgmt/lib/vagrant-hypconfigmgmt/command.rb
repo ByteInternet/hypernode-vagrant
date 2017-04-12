@@ -36,6 +36,9 @@ AVAILABLE_FS_TYPES = ['nfs', 'nfs_guest', 'virtualbox', 'rsync']
 # Perhaps we should consider using a different default on different platforms.
 DEFAULT_FS_TYPE = 'virtualbox'
 
+AVAILABLE_UBUNTU_VERSIONS = ['xenial', 'precise']
+DEFAULT_UBUNTU_VERSION = 'xenial'
+
 
 module VagrantHypconfigmgmt
   class Command
@@ -187,6 +190,20 @@ module VagrantHypconfigmgmt
     end
 
 
+    def get_ubuntu_version(env)
+      ask_message = "What Ubuntu version do you want to use? Options: xenial, precise (deprecated) [default #{DEFAULT_UBUNTU_VERSION}]: "
+      ubuntu_version = get_setting(env, AVAILABLE_UBUNTU_VERSIONS, DEFAULT_UBUNTU_VERSION, ask_message)
+      case ubuntu_version
+        when "xenial"
+          message = ("Will use the Xenial version. This is the default.")
+        when "precise"
+          message = ("Will use the Precise version (will soon be deprecated)")
+      end 
+      env[:ui].info(message)
+      return ubuntu_version
+    end
+
+
     # Make sure we don't link /data/web/public on Magento 2 Vagrants
     # because that dir will be a symlink to /data/web/magento2/pub and 
     # we mount that. On Magento 1 Vagrants we need to make sure we don't
@@ -268,9 +285,9 @@ HEREDOC
       end
     end
 
-
     def ensure_vagrant_box_type_configured(env)
       settings = retrieve_settings()
+      settings['ubuntu_version'] ||= get_ubuntu_version(env)
       if settings['ubuntu_version'] == 'xenial'
         settings['vagrant']['box'] = 'hypernode_xenial'
         settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/xenial/catalog.json'
@@ -288,7 +305,6 @@ HEREDOC
       end
       update_settings(settings)
     end
-
 
     def ensure_default_domain_configured(env)
       settings = retrieve_settings()
