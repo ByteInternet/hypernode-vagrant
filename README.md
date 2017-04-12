@@ -33,18 +33,26 @@ The first time you run `vagrant up` after downloading the hypernode-vagrant zip 
     $ vagrant up
 
     Bringing machine 'hypernode' up with 'virtualbox' provider...
-        hypernode: Is this a Magento 1 or 2 Hypernode? [default 2]: 1
-    ==> hypernode: Nginx will be configured for Magento 1. The webdir will be /data/web/public
-        hypernode: Is this a PHP 5.5 or 7.0 Hypernode? [default 7.0]: 5.5
-    ==> hypernode: Will boot a box with PHP 5.5 installed
-        hypernode: Do you want to enable Varnish? Enter true or false [default false]:
+        hypernode: Is this a Magento 1 or 2 Hypernode? [default 2]: 
+    ==> hypernode: Nginx will be configured for Magento 2. /data/web/magento2/pub will be symlinked to /data/web/public
+        hypernode: Is this a PHP 5.5 or 7.0 Hypernode? [default 7.0]: 
+    ==> hypernode: Will boot a box with PHP 7.0 installed
+        hypernode: Do you want to enable Varnish? Enter true or false [default false]: 
     ==> hypernode: Varnish will be disabled by loading a nocache vcl.
-        hypernode: What filesystem type do you want to use? Options: nfs_guest, nfs, rsync, virtualbox [default virtualbox]:
+        hypernode: What filesystem type do you want to use? Options: nfs_guest, nfs, rsync, virtualbox [default virtualbox]: 
     ==> hypernode: Virtualbox is the default fs type. If you later want to try a faster fs type like nfs_guest, edit local.yml
-    ==> hypernode: Disabling fs->folders->magento2 in the local.yml because Magento 1 was configured.
-        hypernode: Do you want to enable the production-like firewall? Enter true or false [default false]:
+    ==> hypernode: Disabling fs->folders->magento1 in the local.yml because Magento 2 was configured..
+        hypernode: Do you want to enable the production-like firewall? Enter true or false [default false]: 
     ==> hypernode: The firewall will be disabled
-    ==> hypernode: Will use PHP 5.5. If you want PHP 7 instead change the php version in local.yml.
+        hypernode: Do you want to enable production-like memory management? 
+        hypernode: This might be slower but it is more in-line with a real Hypernode. 
+        hypernode: Note: for LXC boxes this setting is disabled. 
+        hypernode: Enter true or false [default false]: 
+    ==> hypernode: Production-like memory management will be disabled
+        hypernode: Do you want to install Xdebug? Enter true or false [default false]: 
+    ==> hypernode: Xdebug will be disabled
+        hypernode: What Ubuntu version do you want to use? Options: xenial, precise (deprecated) [default xenial]: 
+    ==> hypernode: Will use the Xenial version. This is the default.
     ==> hypernode: Your hypernode-vagrant is now configured. Please run "vagrant up" again.
 ```
 
@@ -52,7 +60,11 @@ By answering the questions, you can decide:
 - Whether a magento 2 or a magento 1 environment will be set up.
 - What php version should be used
 - Varnish should be enabled or not
+- What file sharing type should be used
 - Whether firewall configuration similar to production should be configured
+- If you want to enable strict memory management (production-like conditions)
+- If you want to enable Xdebug
+- What Ubuntu version to use (Xenial or the old Precise version)
 
 This way a valid local.yml is created which is then used to preconfigure the hypernode-vagrant.
 When this is done, you can run `vagrant up` again to start your vagrant box.
