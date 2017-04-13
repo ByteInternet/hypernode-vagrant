@@ -5,7 +5,7 @@ require 'fileutils'
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
-VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.7"
+VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.8"
 
 # if vagrant-hypconfigmgmt is not installed, install it and abort
 if !Vagrant.has_plugin?("vagrant-hypconfigmgmt", version = VAGRANT_HYPCONFIGMGMT_VERSION) && !ARGV.include?("plugin") && !ARGV.include?("status")
@@ -71,7 +71,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
            -f #{settings['firewall']['state']} \
            -c #{settings['cgroup']['state']} \
            -x #{settings['xdebug']['state']} \
-           -d #{settings['hostmanager']['default_domain']}" \
+           -d #{settings['hostmanager']['default_domain']} \
+           -p #{settings['php']['version']}" \
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"
