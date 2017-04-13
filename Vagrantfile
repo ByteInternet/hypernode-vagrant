@@ -71,7 +71,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
            -f #{settings['firewall']['state']} \
            -c #{settings['cgroup']['state']} \
            -x #{settings['xdebug']['state']} \
-           -d #{settings['hostmanager']['default_domain']}" \
+           -d #{settings['hostmanager']['default_domain']} \
+           -p #{settings['php']['version']}" \
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"
