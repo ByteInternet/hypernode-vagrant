@@ -73,14 +73,17 @@ if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; the
     chown -R $user:$user /data/web/public
 fi
 
+# Start the correct FPM
+which php5 && PHP_VERSION="php5" || /bin/true
+which php7.0 && PHP_VERSION="php7.0" || /bin/true
+which hypernode-switch-php && hypernode-switch-php ${PHP_VERSION/php/} || /bin/true
+
 if $xdebug_enabled; then
     XDEBUG_RELEASE="https://xdebug.org/files/xdebug-2.5.0rc1.tgz"
     echo "Ensuring Xdebug is installed"
 
     # Install Xdebug for retrieving extended debug information and 
     # stacktraces from your development environment.
-    which php5 && PHP_VERSION="php5" || /bin/true
-    which php7.0 && PHP_VERSION="php7.0" || /bin/true
 
     if [ -z $PHP_VERSION ]; then
         echo "No supported PHP version found for this xdebug installation script. Skipping.."
