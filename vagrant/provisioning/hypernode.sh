@@ -78,11 +78,11 @@ fi
 # Start the correct FPM daemon
 hypernode-switch-php $php_version
 
-if grep -q xenial /etc/lsb-release; then
-	echo "Xdebug not implemented for Xenial at this point in time."
-	echo "Need this? Please let us know on https://github.com/ByteInternet/hypernode-vagrant/issues"
-else
-    if $xdebug_enabled; then
+if $xdebug_enabled; then
+    if grep -q xenial /etc/lsb-release; then
+    	echo "Xdebug not implemented for Xenial at this point in time."
+    	echo "Need this? Please let us know on https://github.com/ByteInternet/hypernode-vagrant/issues"
+    else
         XDEBUG_RELEASE="https://xdebug.org/files/xdebug-2.5.0rc1.tgz"
         echo "Ensuring Xdebug is installed"
     
