@@ -76,7 +76,7 @@ if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; the
 fi
 
 # Start the correct FPM daemon
-hypernode-switch-php $php_version
+command -v hypernode-switch-php >/dev/null 2>&1 && hypernode-switch-php $php_version || /bin/true
 
 if $xdebug_enabled; then
     if grep -q xenial /etc/lsb-release; then
