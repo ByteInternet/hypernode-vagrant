@@ -1,4 +1,7 @@
-from hypernode_vagrant_runner.utils import run_local_command
+from mock import call
+from subprocess import CalledProcessError
+
+from hypernode_vagrant_runner.utils import run_local_command, is_python_3
 from tests.testcase import TestCase
 
 
@@ -35,6 +38,35 @@ class TestRunLocalCommand(TestCase):
         self.write_output_to_stdout.assert_called_once_with(
             self.check_output.return_value
         )
+
+    def test_run_local_command_also_writes_stderr_and_stdout_to_stdout_in_case_of_nonzero_exit_in_python3(self):
+        if is_python_3():
+            self.check_output.side_effect = CalledProcessError(
+                1, cmd='echo 1', output='stdout', stderr='stderr'
+            )
+
+            with self.assertRaises(CalledProcessError):
+                run_local_command(['echo', '1'])
+
+            expected_calls = [
+                call('stdout'), call('stderr')
+            ]
+            # For loop instead of assertEqual(s) or assertCountEqual(s) because
+            # that is both Python 2 and 3 compatible.
+            for expected_call in expected_calls:
+                self.assertIn(expected_call, self.write_output_to_stdout.mock_calls)
+
+    def test_run_local_command_also_writes_stdout_to_stdout_in_case_of_nonzero_exit_in_python2(self):
+        if not is_python_3():
+            self.check_output.side_effect = CalledProcessError(
+                1, cmd='echo 1', output='stdout',
+                # No stderr in CalledProcessError in Python 2
+            )
+
+            with self.assertRaises(CalledProcessError):
+                run_local_command(['echo', '1'])
+
+            self.write_output_to_stdout.assert_called_once_with('stdout')
 
     def test_run_local_command_decodes_output_if_python_3(self):
         ret = run_local_command(['echo', '1'])
