@@ -1,7 +1,7 @@
 from sys import stdout
 from logging import getLogger
 from os import geteuid
-from subprocess import check_call, check_output
+from subprocess import check_call, check_output, CalledProcessError
 
 log = getLogger(__name__)
 
@@ -57,6 +57,13 @@ def run_local_command(command, shell=False):
     the command as a list instead of a string
     :return str output: The output
     """
-    output = check_output(command, shell=shell)
+    try:
+        output = check_output(command, shell=shell)
+    except CalledProcessError as e:
+        log.warning("Running command failed: {}".format(command))
+        write_output_to_stdout(e.output)
+        if hasattr(e, 'stderr'):
+            write_output_to_stdout(e.stderr)
+        raise
     write_output_to_stdout(output)
     return output.decode('utf-8') if is_python_3() else output
