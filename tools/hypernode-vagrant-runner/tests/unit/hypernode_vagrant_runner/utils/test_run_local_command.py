@@ -56,6 +56,39 @@ class TestRunLocalCommand(TestCase):
             for expected_call in expected_calls:
                 self.assertIn(expected_call, self.write_output_to_stdout.mock_calls)
 
+    def test_run_local_command_also_writes_stderr_to_stdout_in_case_of_nonzero_exit_in_python3_but_no_stdout(self):
+        if is_python_3():
+            self.check_output.side_effect = CalledProcessError(
+                1, cmd='echo 1', output=None, stderr='stderr'
+            )
+
+            with self.assertRaises(CalledProcessError):
+                run_local_command(['echo', '1'])
+
+            self.write_output_to_stdout.assert_called_once_with('stderr')
+
+    def test_run_local_command_only_writes_stdout_to_stdout_in_case_of_nonzero_exit_in_python3_but_no_stderr(self):
+        if is_python_3():
+            self.check_output.side_effect = CalledProcessError(
+                1, cmd='echo 1', output='stdout', stderr=None
+            )
+
+            with self.assertRaises(CalledProcessError):
+                run_local_command(['echo', '1'])
+
+            self.write_output_to_stdout.assert_called_once_with('stdout')
+
+    def test_run_local_command_does_not_write_to_stdout_in_case_of_nonzero_exit_in_python2_but_no_stdout(self):
+        if not is_python_3():
+            self.check_output.side_effect = CalledProcessError(
+                1, cmd='echo 1', output=None
+            )
+
+            with self.assertRaises(CalledProcessError):
+                run_local_command(['echo', '1'])
+
+	    self.assertFalse(self.write_output_to_stdout.called)
+
     def test_run_local_command_also_writes_stdout_to_stdout_in_case_of_nonzero_exit_in_python2(self):
         if not is_python_3():
             self.check_output.side_effect = CalledProcessError(

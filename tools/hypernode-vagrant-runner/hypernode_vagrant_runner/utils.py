@@ -61,8 +61,9 @@ def run_local_command(command, shell=False):
         output = check_output(command, shell=shell)
     except CalledProcessError as e:
         log.warning("Running command failed: {}".format(command))
-        write_output_to_stdout(e.output)
-        if hasattr(e, 'stderr'):
+        if e.output:
+            write_output_to_stdout(e.output)
+        if hasattr(e, 'stderr') and e.stderr:
             write_output_to_stdout(e.stderr)
         raise
     write_output_to_stdout(output)
