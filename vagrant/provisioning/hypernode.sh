@@ -76,7 +76,7 @@ if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; the
 fi
 
 # Start the correct FPM daemon
-command -v hypernode-switch-php >/dev/null 2>&1 && hypernode-switch-php $php_version || /bin/true
+command -v hypernode-switch-php >/dev/null 2>&1 && hypernode-switch-php $php_version 2>&1 || /bin/true
 
 if $xdebug_enabled; then
     if grep -q xenial /etc/lsb-release; then
@@ -146,19 +146,50 @@ if ! $varnish_enabled; then
     varnishadm vcl.use nocache
 fi
 
-# ufw is disabled by default with an upstart override in the boxfile image because sometimes 
-# the firewall gets in the way when mounting the directories with specific synced folder fs types
+# ufw is disabled by default in the boxfile image because sometimes the firewall gets 
+# in the way when mounting the directories with specific synced folder fs types
 if $firewall_enabled; then
-    rm -f /etc/init/ufw.override
-    service ufw status | grep -q 'start/running' || service ufw start
+    echo "Enabling production-like firewall"
+    if grep -q xenial /etc/lsb-release; then
+        systemctl enable ufw 2> /dev/null || /bin/true
+        systemctl start ufw 2> /dev/null || /bin/true
+    else
+        rm -f /etc/init/ufw.override
+        service ufw status | grep -q 'start/running' || service ufw start
+    fi
 fi
 
 if $cgroup_enabled; then
-    rm -f /etc/init/cgconfig.override
-    rm -f /etc/init/hypernode-kamikaze.override
-    if [ -f /etc/cgconfig.conf ]; then
-        service cgconfig status | grep -q 'start/running' || service cgconfig start
-        service hypernode-kamikaze status | grep -q 'start/running' || service hypernode-kamikaze start
+    if grep -q xenial /etc/lsb-release; then
+        echo "Ensuring memory management is enabled using systemd"
+        # Do memory limit the systemd slice
+        if [ -e /etc/systemd/system/limited.slice ]; then
+            sed -i '/MemoryLimit=*/ s/^#*//' /etc/systemd/system/limited.slice 
+            systemctl daemon-reload
+        fi
+        # Ensure the hypernode oomkiller is enabled and started
+        systemctl enable hypernode-kamikaze 2> /dev/null || /bin/true
+        systemctl start hypernode-kamikaze 2> /dev/null || /bin/true
+    else
+        echo "Ensuring memory management is enabled using cgconfig"
+        rm -f /etc/init/cgconfig.override
+        rm -f /etc/init/hypernode-kamikaze.override
+        if [ -f /etc/cgconfig.conf ]; then
+            service cgconfig status | grep -q 'start/running' || service cgconfig start
+            service hypernode-kamikaze status | grep -q 'start/running' || service hypernode-kamikaze start
+        fi
+    fi
+else
+    if grep -q xenial /etc/lsb-release; then
+        echo "Ensuring memory management is disabled"
+        # Don't memory limit the systemd slice
+        if [ -e /etc/systemd/system/limited.slice ]; then
+            sed -i '/MemoryLimit=*/ s/^#*/#/' /etc/systemd/system/limited.slice 
+            systemctl daemon-reload
+        fi
+        # Ensure the hypernode oomkiller is disabled and stopped
+        systemctl disable hypernode-kamikaze 2> /dev/null || /bin/true
+        systemctl stop hypernode-kamikaze 2> /dev/null || /bin/true
     fi
 fi
 
