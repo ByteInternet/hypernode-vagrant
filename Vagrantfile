@@ -104,7 +104,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           result = ""
           vm.communicate.execute("ifconfig `find /sys/class/net \\\( -name 'eth*' -o -name 'enp*' \\\) -printf '%f\n' | sort | tail -n 1`") do |type, data|
             result << data if type == :stdout
-	    puts result
           end
         end
         (ip = /inet addr:(\d+\.\d+\.\d+\.\d+)/.match(result)) && ip[1]
