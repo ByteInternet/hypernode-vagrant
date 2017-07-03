@@ -337,3 +337,8 @@ If you get this error you can continue the interrupted download with another ```
     hypernode: Downloading: http://vagrant.hypernode.com/hypernode.vagrant.release-2653.box
 ==> hypernode: Box download is resuming from prior download progress
 ```
+
+### Can't connect to hypernode.local but can connect to 127.0.0.1:8080
+
+Make sure you have `net-tools` installed if you're on Linux. If that did't fix it, you can check out [this issue](https://github.com/ByteInternet/hypernode-vagrant/issues/153) or [this issue](https://github.com/ByteInternet/hypernode-vagrant/issues/150) for more debugging suggestions.
+
