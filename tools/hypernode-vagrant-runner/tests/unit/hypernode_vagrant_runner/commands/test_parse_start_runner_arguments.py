@@ -147,3 +147,26 @@ class TestParseStartRunnerArguments(TestCase):
         ret = parse_start_runner_arguments()
 
         self.assertEqual(ret, self.parse_arguments.return_value)
+
+    def test_parse_start_runner_arguments_errors_when_php56_and_precise(self):
+        self.parse_arguments.return_value.php = '5.6'
+        self.parse_arguments.return_value.xenial = False
+
+        parse_start_runner_arguments()
+
+        self.argument_parser.return_value.error.assert_called_once_with(ANY)
+
+    def test_parse_start_runner_arguments_does_not_error_when_php55_and_precise(self):
+        self.parse_arguments.return_value.php = '5.5'
+        self.parse_arguments.return_value.xenial = False
+
+        parse_start_runner_arguments()
+
+        self.assertFalse(self.argument_parser.return_value.error.called)
+
+    def test_parse_start_runner_arguments_does_not_error_if_php56_and_xenial(self):
+        self.parse_arguments.return_value.php = '5.6'
+
+        parse_start_runner_arguments()
+
+        self.assertFalse(self.argument_parser.return_value.error.called)

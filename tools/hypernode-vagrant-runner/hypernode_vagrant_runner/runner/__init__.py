@@ -94,7 +94,7 @@ def launch_runner(project_path=None, command_to_run=None,
     :param str ssh_user: The SSH user to use to run the hook as
     :param bool xdebug_enabled: Install xdebug in the vagrant
     :param bool skip_try_sudo: Skip try to sudo beforehand to fail early
-    ;param bool xenial: Start a Xenial image
+    :param bool xenial: Start a Xenial image
     :param bool no_provision: Pass --no-provision to vagrant up
     :return None:
     """

@@ -87,7 +87,7 @@ class TestRunLocalCommand(TestCase):
             with self.assertRaises(CalledProcessError):
                 run_local_command(['echo', '1'])
 
-	    self.assertFalse(self.write_output_to_stdout.called)
+        self.assertFalse(self.write_output_to_stdout.called)
 
     def test_run_local_command_also_writes_stdout_to_stdout_in_case_of_nonzero_exit_in_python2(self):
         if not is_python_3():

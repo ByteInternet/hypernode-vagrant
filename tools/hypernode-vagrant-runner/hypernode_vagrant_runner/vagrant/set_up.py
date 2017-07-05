@@ -107,7 +107,7 @@ def write_hypernode_vagrant_configuration(
     :param str directory: The hypernode-vagrant checkout directory
     :param str php_version: The PHP version to use
     :param bool xdebug_enabled: Install xdebug in the vagrant
-    ;param bool xenial: Configure a Xenial image
+    :param bool xenial: Start a Xenial image
     :return None:
     """
     log.info("Writing configuration file to the hypernode-vagrant directory")
@@ -137,7 +137,7 @@ def start_hypernode_vagrant(directory,
     :param str directory: The directory in which to start the hypernode-vagrant
     :param str php_version: The PHP version to use
     :param bool xdebug_enabled: Install xdebug in the vagrant
-    ;param bool xenial: Start a Xenial image
+    :param bool xenial: Start a Xenial image
     :param bool no_provision: Pass --no-provision to vagrant up
     :return None:
     """
@@ -159,7 +159,7 @@ def create_hypernode_vagrant(directory=None,
     :param str php_version: The PHP version to use
     :param bool xdebug_enabled: Install xdebug in the vagrant
     :param bool skip_try_sudo: Skip try to sudo beforehand to fail early
-    ;param bool xenial: Start a Xenial image
+    :param bool xenial: Start a Xenial image
     :param bool no_provision: Pass --no-provision to vagrant up
     :return str directory: Path to the hypernode-vagrant checkout
     None for a temp dir that will automatically be created
