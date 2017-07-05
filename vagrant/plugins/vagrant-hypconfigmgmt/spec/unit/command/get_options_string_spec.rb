@@ -34,7 +34,7 @@ describe VagrantHypconfigmgmt::Command do
 
     context "when the options are floats" do
       it "it casts the floats to strings and returns them separated by 'or'" do
-        expect( subject.get_options_string([5.5, 7.0]) ).to eq("5.5 or 7.0")
+        expect( subject.get_options_string([5.5, 5.6, 7.0]) ).to eq("5.5 or 5.6 or 7.0")
       end
     end
 
