@@ -89,6 +89,8 @@ if $xdebug_enabled; then
         # Install Xdebug for retrieving extended debug information and 
         # stacktraces from your development environment.
         which php5 && PHP_VERSION="php5" || /bin/true
+        which php5.5 && PHP_VERSION="php5" || /bin/true
+        which php5.6 && PHP_VERSION="php5.6" || /bin/true
         which php7.0 && PHP_VERSION="php7.0" || /bin/true
     
         if [ -z $PHP_VERSION ]; then
@@ -113,10 +115,14 @@ if $xdebug_enabled; then
             ./configure
             make
             [ "$PHP_VERSION" == "php5" ] && MODULES_DIR="/usr/lib/php5/20121212/"
+            [ "$PHP_VERSION" == "php5.5" ] && MODULES_DIR="/usr/lib/php5/20121212/"
+            [ "$PHP_VERSION" == "php5.6" ] && MODULES_DIR="/usr/lib/php5/20131226/"
             [ "$PHP_VERSION" == "php7.0" ] && MODULES_DIR="/usr/lib/php/20151012/"
             cp -f modules/xdebug.so $MODULES_DIR
     
             [ "$PHP_VERSION" == "php5" ] && PHP_DIR="/etc/php5/"
+            [ "$PHP_VERSION" == "php5.5" ] && PHP_DIR="/etc/php/5.5/"
+            [ "$PHP_VERSION" == "php5.6" ] && PHP_DIR="/etc/php/5.6/"
             [ "$PHP_VERSION" == "php7.0" ] && PHP_DIR="/etc/php/7.0/"
     
             # Configure PHP to load xdebug.so
@@ -129,6 +135,8 @@ if $xdebug_enabled; then
     
             # Restart PHP and Nginx
             [ "$PHP_VERSION" == "php5" ] && service php5-fpm restart
+            [ "$PHP_VERSION" == "php5.5" ] && service php5.5-fpm restart
+            [ "$PHP_VERSION" == "php5.6" ] && service php5.6-fpm restart
             [ "$PHP_VERSION" == "php7.0" ] && service php7.0-fpm restart
             service nginx restart
     

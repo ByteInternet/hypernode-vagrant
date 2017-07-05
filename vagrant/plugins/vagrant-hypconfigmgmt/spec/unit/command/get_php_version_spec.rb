@@ -38,6 +38,21 @@ describe VagrantHypconfigmgmt::Command do
     end
 
 
+    context "when PHP 5.6 is configured" do
+      it "it notifies the user that PHP 5.6 will be used and returns the value" do
+	# check if the setting is prompted for and pretend it returns a "PHP 5.6" answer
+        expect(subject).to receive(:get_setting).with(
+	  env, AVAILABLE_PHP_VERSIONS, DEFAULT_PHP_VERSION,
+	  "Is this a PHP #{subject.get_options_string(AVAILABLE_PHP_VERSIONS)} Hypernode? [default #{DEFAULT_PHP_VERSION}]: "
+	).and_return("5.6")
+        # check if the user is notified about the PHP version
+        expect(ui).to receive(:info).once.with(/.*PHP 5.6*/)
+	# check if the function returns float 5.5 if a PHP 5.5 Vagrant is to be used
+        expect( subject.get_php_version(env) ).to eq(5.6)
+      end
+    end
+
+
     context "when PHP 7.0 is configured" do
       it "it notifies the user that PHP 7.0 will be used and returns the value" do
 	# check if the setting is prompted for and pretend it returns a "PHP 7.0" answer
