@@ -80,8 +80,11 @@ command -v hypernode-switch-php >/dev/null 2>&1 && hypernode-switch-php $php_ver
 
 if $xdebug_enabled; then
     if grep -q xenial /etc/lsb-release; then
-    	echo "Xdebug not implemented for Xenial at this point in time."
-    	echo "Need this? Please let us know on https://github.com/ByteInternet/hypernode-vagrant/issues"
+        echo "Installing xdebug"
+	apt-get update
+        apt-get install varnish php-xdebug -y \
+          -q -o Dpkg::Options::="--force-confdef" \
+          -o Dpkg::Options::="--force-confold"
     else
         XDEBUG_RELEASE="https://xdebug.org/files/xdebug-2.5.0rc1.tgz"
         echo "Ensuring Xdebug is installed"
@@ -133,19 +136,18 @@ if $xdebug_enabled; then
         	        echo -n "$EXTENSION_CONFIG" > ${PHP_DIR}${i}/conf.d/10-xdebug.ini
             done
     
-            # Restart PHP and Nginx
-            [ "$PHP_VERSION" == "php5" ] && service php5-fpm restart
-            [ "$PHP_VERSION" == "php5.5" ] && service php5.5-fpm restart
-            [ "$PHP_VERSION" == "php5.6" ] && service php5.6-fpm restart
-            [ "$PHP_VERSION" == "php7.0" ] && service php7.0-fpm restart
-            service nginx restart
-    
         fi
-        echo ""
-        echo "Xdebug is installed. To configure Xdebug to send metrics to"
-        echo "your IDE, see the 'Configuring Xdebug to send metrics section in "
-        echo "this article: https://support.hypernode.com/knowledgebase/install-xdebug-hypernode-vagrant/"
+       # Restart PHP and Nginx
+       [ "$PHP_VERSION" == "php5" ] && service php5-fpm restart
+       [ "$PHP_VERSION" == "php5.5" ] && service php5.5-fpm restart
+       [ "$PHP_VERSION" == "php5.6" ] && service php5.6-fpm restart
+       [ "$PHP_VERSION" == "php7.0" ] && service php7.0-fpm restart
+       service nginx restart
     fi
+    echo ""
+    echo "Xdebug is installed. To configure Xdebug to send metrics to"
+    echo "your IDE, see the 'Configuring Xdebug to send metrics section in "
+    echo "this article: https://support.hypernode.com/knowledgebase/install-xdebug-hypernode-vagrant/"
 fi
 
 if ! $varnish_enabled; then 
