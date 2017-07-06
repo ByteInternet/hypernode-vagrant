@@ -81,7 +81,7 @@ command -v hypernode-switch-php >/dev/null 2>&1 && hypernode-switch-php $php_ver
 if $xdebug_enabled; then
     if grep -q xenial /etc/lsb-release; then
         echo "Installing xdebug"
-	apt-get update
+        apt-get update
         apt-get install varnish php-xdebug -y \
           -q -o Dpkg::Options::="--force-confdef" \
           -o Dpkg::Options::="--force-confold"
@@ -98,7 +98,7 @@ if $xdebug_enabled; then
     
         if [ -z $PHP_VERSION ]; then
             echo "No supported PHP version found for this xdebug installation script. Skipping.."
-    	break
+        break
         fi
     
         # Download the configured release
@@ -111,7 +111,7 @@ if $xdebug_enabled; then
             wget -q -nc -O /tmp/xdebug.tgz $XDEBUG_RELEASE
             cd /tmp
             tar -xvzf xdebug.tgz
-    	cd xdebug-*
+        cd xdebug-*
     
             # Build Xdebug from source
             /usr/bin/phpize
@@ -131,9 +131,9 @@ if $xdebug_enabled; then
             # Configure PHP to load xdebug.so
             for i in fpm cli; do
                 EXTENSION_CONFIG="zend_extension = ${MODULES_DIR}xdebug.so"
-    	    touch ${PHP_DIR}${i}/conf.d/10-xdebug.ini
-        	    grep -q "$EXTENSION_CONFIG" ${PHP_DIR}${i}/conf.d/10-xdebug.ini || \
-        	        echo -n "$EXTENSION_CONFIG" > ${PHP_DIR}${i}/conf.d/10-xdebug.ini
+                touch ${PHP_DIR}${i}/conf.d/10-xdebug.ini
+                grep -q "$EXTENSION_CONFIG" ${PHP_DIR}${i}/conf.d/10-xdebug.ini || \
+                    echo -n "$EXTENSION_CONFIG" > ${PHP_DIR}${i}/conf.d/10-xdebug.ini
             done
     
         fi
