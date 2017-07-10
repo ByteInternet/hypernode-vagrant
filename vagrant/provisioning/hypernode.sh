@@ -80,8 +80,11 @@ command -v hypernode-switch-php >/dev/null 2>&1 && hypernode-switch-php $php_ver
 
 if $xdebug_enabled; then
     if grep -q xenial /etc/lsb-release; then
-    	echo "Xdebug not implemented for Xenial at this point in time."
-    	echo "Need this? Please let us know on https://github.com/ByteInternet/hypernode-vagrant/issues"
+        echo "Installing xdebug"
+        apt-get update
+        apt-get install varnish php-xdebug -y \
+          -q -o Dpkg::Options::="--force-confdef" \
+          -o Dpkg::Options::="--force-confold"
     else
         XDEBUG_RELEASE="https://xdebug.org/files/xdebug-2.5.0rc1.tgz"
         echo "Ensuring Xdebug is installed"
@@ -95,7 +98,7 @@ if $xdebug_enabled; then
     
         if [ -z $PHP_VERSION ]; then
             echo "No supported PHP version found for this xdebug installation script. Skipping.."
-    	break
+        break
         fi
     
         # Download the configured release
@@ -108,7 +111,7 @@ if $xdebug_enabled; then
             wget -q -nc -O /tmp/xdebug.tgz $XDEBUG_RELEASE
             cd /tmp
             tar -xvzf xdebug.tgz
-    	cd xdebug-*
+        cd xdebug-*
     
             # Build Xdebug from source
             /usr/bin/phpize
@@ -128,24 +131,23 @@ if $xdebug_enabled; then
             # Configure PHP to load xdebug.so
             for i in fpm cli; do
                 EXTENSION_CONFIG="zend_extension = ${MODULES_DIR}xdebug.so"
-    	    touch ${PHP_DIR}${i}/conf.d/10-xdebug.ini
-        	    grep -q "$EXTENSION_CONFIG" ${PHP_DIR}${i}/conf.d/10-xdebug.ini || \
-        	        echo -n "$EXTENSION_CONFIG" > ${PHP_DIR}${i}/conf.d/10-xdebug.ini
+                touch ${PHP_DIR}${i}/conf.d/10-xdebug.ini
+                grep -q "$EXTENSION_CONFIG" ${PHP_DIR}${i}/conf.d/10-xdebug.ini || \
+                    echo -n "$EXTENSION_CONFIG" > ${PHP_DIR}${i}/conf.d/10-xdebug.ini
             done
     
-            # Restart PHP and Nginx
-            [ "$PHP_VERSION" == "php5" ] && service php5-fpm restart
-            [ "$PHP_VERSION" == "php5.5" ] && service php5.5-fpm restart
-            [ "$PHP_VERSION" == "php5.6" ] && service php5.6-fpm restart
-            [ "$PHP_VERSION" == "php7.0" ] && service php7.0-fpm restart
-            service nginx restart
-    
         fi
-        echo ""
-        echo "Xdebug is installed. To configure Xdebug to send metrics to"
-        echo "your IDE, see the 'Configuring Xdebug to send metrics section in "
-        echo "this article: https://support.hypernode.com/knowledgebase/install-xdebug-hypernode-vagrant/"
+       # Restart PHP and Nginx
+       [ "$PHP_VERSION" == "php5" ] && service php5-fpm restart
+       [ "$PHP_VERSION" == "php5.5" ] && service php5.5-fpm restart
+       [ "$PHP_VERSION" == "php5.6" ] && service php5.6-fpm restart
+       [ "$PHP_VERSION" == "php7.0" ] && service php7.0-fpm restart
+       service nginx restart
     fi
+    echo ""
+    echo "Xdebug is installed. To configure Xdebug to send metrics to"
+    echo "your IDE, see the 'Configuring Xdebug to send metrics section in "
+    echo "this article: https://support.hypernode.com/knowledgebase/install-xdebug-hypernode-vagrant/"
 fi
 
 if ! $varnish_enabled; then 
