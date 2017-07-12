@@ -78,14 +78,20 @@ def parse_start_runner_arguments():
     parser.add_argument(
         '--xenial',
         action='store_true',
-        help='Start a Xenial Hypernode (PRE-ALPHA)'
+        help='Start a Xenial Hypernode'
     )
     parser.add_argument(
         '--no-provision',
         action='store_true',
         help='Run "vagrant up" with the --no-provision flag'
     )
-    return parse_arguments(parser)
+    args = parse_arguments(parser)
+    if not args.xenial and args.php == '5.6':
+        parser.error(
+            "Can't use the Precise Hypernode with PHP5.6. "
+            "Add the --xenial flag to use the Xenial version"
+        )
+    return args
 
 
 def start_runner():

@@ -47,7 +47,7 @@ def hypernode_vagrant(directory=None,
     :param str php_version: The PHP version to use
     :param bool xdebug_enabled: Install xdebug in the vagrant
     :param bool skip_try_sudo: Skip try to sudo beforehand to fail early
-    ;param bool xenial: Start a Xenial image
+    :param bool xenial: Start a Xenial image
     :param bool no_provision: Pass --no-provision to vagrant up
     :yield dict vagrant_ssh_config: Parsed vagrant ssh-config
     """
