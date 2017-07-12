@@ -1,0 +1,16 @@
+app_name: "mytestapp"
+magento_installation_path: "/data/web/public"
+magento_baseurl: "magento1developmentenvironment.hypernode.local"
+admin: 
+  first_name: "Firstname"
+  last_name: "Lastname"
+  password: "thisisanexamplePassword123456"
+  locale: "en_US"
+  email: "example@example.com"
+admin_password: "thisisanexamplePassword123456"
+admin_frontname: "test"
+mysqlhost: "mysqlmaster"
+mysql_app_user: "app"
+mysql_app_password: "thisisanexamplePassword123456"
+magento_db: "magento"
+
