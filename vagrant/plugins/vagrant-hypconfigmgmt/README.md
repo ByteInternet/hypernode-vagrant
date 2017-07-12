@@ -11,5 +11,5 @@ Create the gemfile (package)
 ```
 $ make
 rake build
-vagrant-hypconfigmgmt 0.0.8 built to pkg/vagrant-hypconfigmgmt-0.0.8.gem.
+vagrant-hypconfigmgmt 0.0.8 built to pkg/vagrant-hypconfigmgmt-0.0.9.gem.
 ```
