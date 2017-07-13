@@ -1,0 +1,27 @@
+commands:
+  N98\Magento\Command\Installer\InstallCommand:
+    installation:
+      defaults:
+        currency: EUR
+        locale: {{ admin.locale }}
+        timezone: UTC
+        use_secure: no
+        use_rewrites: yes
+        session_save: files
+        admin_username: admin
+        admin_firstname: {{ admin.first_name }}
+        admin_lastname: {{ admin.last_name }}
+        admin_password: {{ admin_password }}
+        admin_frontname: {{ admin_frontname }}
+        admin_email: {{ admin.email }}
+        encryption_key:
+
+    magento-packages:
+      - name: byte-mag-mirror-latest
+{# 'version' is required and validated by Magerun, but does not seem to be used -- so we'll leave it as the major version and update this file less often #}
+        version: 1.9
+        dist:
+          url: http://magento.mirror.hypernode.com/releases/magento-latest.tar.gz
+          type: tar
+        extra:
+          sample-data: sample-data-1.9.1.0
