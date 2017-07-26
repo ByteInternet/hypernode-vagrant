@@ -16,7 +16,7 @@ def upload_project_to_vagrant(project_path, vagrant_info, ssh_user=HYPERNODE_VAG
     """
     log.info("Uploading project {} to /data/web/public on the vagrant.."
              "".format(project_path))
-    upload_project_command = "rsync -avz --delete " \
+    upload_project_command = "rsync -q -avz --delete " \
                              "-e 'ssh -p {Port} -i {IdentityFile} " \
                              "-oStrictHostKeyChecking=no " \
                              "-oUserKnownHostsFile=/dev/null' " \

@@ -20,7 +20,7 @@ class TestUploadProjectToVagrant(TestCase):
             vagrant_info=self.vagrant_ssh_config
         )
 
-        expected_command = "rsync -avz --delete -e " \
+        expected_command = "rsync -q -avz --delete -e " \
                            "'ssh -p 2222 " \
                            "-i /tmp/tmpZrTKrM/.vagrant/machines/hypernode/virtualbox/private_key " \
                            "-oStrictHostKeyChecking=no " \
@@ -55,7 +55,7 @@ class TestUploadProjectToVagrant(TestCase):
             ssh_user='root'
         )
 
-        expected_command = "rsync -avz --delete -e " \
+        expected_command = "rsync -q -avz --delete -e " \
                            "'ssh -p 2222 " \
                            "-i /tmp/tmpZrTKrM/.vagrant/machines/hypernode/virtualbox/private_key " \
                            "-oStrictHostKeyChecking=no " \
