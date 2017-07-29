@@ -1,14 +1,14 @@
 # Install Magento1 on a Hypernode
 # necessary parameters:
-  # magento_installation_path
-  # magento_baseurl
-  # admin (hash containing keys first_name, last_name, password, locale, email)
-  # admin_password
-  # admin_frontname
-  # mysqlhost
-  # mysql_app_user
-  # mysql_app_password
-  # magento_db
+#   magento_installation_path
+#   magento_baseurl
+#   admin (hash containing keys first_name, last_name, password, locale, email)
+#   admin_password
+#   admin_frontname
+#   mysqlhost
+#   mysql_app_user
+#   mysql_app_password
+#   magento_db
 
 ---
 - hosts: all
