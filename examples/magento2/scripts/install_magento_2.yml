@@ -1,0 +1,93 @@
+# Deploy Magento2 on a Hypernode
+# necessary parameters:
+#   magento_database_name
+#   magento_database_host
+#   magento_database_user
+#   magento_database_password
+#   magento_backend_frontname
+#   magento_base_url
+#   magento_language
+#   magento_timezone
+#   magento_currency
+#   magento_admin_lastname
+#   magento_admin_firstname
+#   magento_admin_email
+#   magento_admin_user
+#   magento_admin_password
+#   magento_use_rewrites
+---
+- hosts: all
+  tasks:
+  - name: ensure Nginx config for Magento 2.X
+    file: state=touch force=yes path=/data/web/nginx/magento2.flag
+
+  - name: update sql password for "app" user
+    mysql_user: name={{ magento_database_user }} password={{ magento_database_password }} priv=*.*:ALL,GRANT host=%
+
+  - name: update sql password in user my.cnf
+    ini_file: dest=/data/web/.my.cnf section=client option=password value={{ magento_database_password }} mode=0600
+
+  - name: create database for new Magento installation
+    mysql_db: name={{ magento_database_name }} state=present
+
+  - name: register installation path contents
+    shell: tree {{ magento_installation_path }} -L 1
+    register: display_magento_dir
+
+  - name: create /data/web/magento2 directory
+    file: path=/data/web/magento2 state=directory mode=0755
+
+  # By always getting the sample data from disk instead of downloading it
+  # directly we can include the sample data in any pre-baked images. This
+  # can save quite some time in the CI environment because we only have to
+  # do disk IO instead of going over the network.
+  - name: check if cached latest magento 2 exists
+    stat: path=/etc/hypernode/defaults/magento2-latest.tar.gz
+    register: cached_mag2_data
+
+  - name: download latest magento 2 data
+    command: wget -nc https://magento.mirror.hypernode.com/releases/magento2-latest.tar.gz -P /data/web/
+    when: cached_mag2_data.stat.exists == false
+
+  - name: unpack cached Magento2 tarball
+    unarchive: src=/etc/hypernode/defaults/magento2-latest.tar.gz dest=/data/web/magento2 copy=no
+    when: cached_mag2_data.stat.exists == true
+
+  - name: unpack downloaded Magento2 tarball
+    unarchive: src=/data/web/magento2-latest.tar.gz dest=/data/web/magento2 copy=no
+    when: cached_mag2_data.stat.exists == false
+
+  - name: create symlink public->magento2
+    shell: ln -fs /data/web/magento2/pub/ /data/web/public
+
+  - name: set Magento2 binary to executable
+    file: path=/data/web/magento2/bin/magento state=file mode=0755
+
+  - name: run magento install setup
+    shell: /usr/bin/php bin/magento setup:install --db-host={{ magento_database_host }} --db-name={{ magento_database_name }} --db-user={{ magento_database_user }} --db-password={{ magento_database_password }} --backend-frontname={{ magento_backend_frontname }} --base-url={{ magento_base_url }} --language={{ magento_language }} --timezone={{ magento_timezone }} --currency={{ magento_currency }} --admin-lastname={{ magento_admin_lastname }} --admin-firstname={{ magento_admin_firstname }} --admin-email={{ magento_admin_email }} --admin-user={{ magento_admin_user }} --admin-password={{ magento_admin_password }} --cleanup-database --use-rewrites={{ magento_use_rewrites }}
+    args:
+      chdir: /data/web/magento2
+
+  - name: run magento upgrade setup
+    command: /usr/bin/php bin/magento setup:upgrade
+    args:
+      chdir: /data/web/magento2
+
+  # http://devdocs.magento.com/guides/v2.0/config-guide/cli/config-cli-subcommands-compiler.html
+  - name: run the single-tenant compiler (takes a while)
+    command: /usr/bin/php bin/magento setup:di:compile
+    args:
+      chdir: /data/web/magento2
+
+  - name: deploy static content
+    command: /usr/bin/php bin/magento setup:static-content:deploy
+    args:
+      chdir: /data/web/magento2
+
+  - name: flush Magento cache
+    command: /usr/local/bin/n98-magerun2 cache:flush
+    args:
+      chdir: /data/web/magento2/
+    become: yes
+    become_user: app
+
