@@ -114,6 +114,11 @@ You can use this config snippet for SSH to ease logging in and then just `ssh hy
         # because the host key will change over time
 ```
 
+A little helper script is provided that retrieves the ssh keys from your local ssh-agent and adds it to the ~app/.ssh/authorized_keys on the hypernode vagrant:
+```
+bin/sync-agent-keys
+```
+
 ### PHP version
 
 The default php version is 5.5. To boot a hypernode-vagrant box with php 7.0 edit the local.yml file or input 5.5 or 7.0 for when asked for the required php version when setting up your vagrant.
@@ -213,8 +218,8 @@ On Windows see ```C:\Windows\System32\drivers\etc\hosts```.
 
 ## Working with shared folders
 
-When you start the vagrant box by running `vagrant up`, vagrant will mount pre-defined directories on the guest onto the host machine (your local desktop). 
-This way you can work locally and make changes in your preferred IDE and view the results by visiting the vagrant box in your browser. 
+When you start the vagrant box by running `vagrant up`, vagrant will mount pre-defined directories on the guest onto the host machine (your local desktop).
+This way you can work locally and make changes in your preferred IDE and view the results by visiting the vagrant box in your browser.
 
 These shared directories are defined in local.yml, a configuration file created when you run `vagrant up` for the first time:
 
@@ -234,7 +239,7 @@ These shared directories are defined in local.yml, a configuration file created 
           guest: /data/web/magento2
 ```
 
-All mountpoints defined in `folders` that have their own `host` and `guest` paths are mounted when setting up. 
+All mountpoints defined in `folders` that have their own `host` and `guest` paths are mounted when setting up.
 If you want to add your own mountpoints, you can add your own section:
 
 ```
