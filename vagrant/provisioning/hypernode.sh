@@ -178,8 +178,8 @@ if $cgroup_enabled; then
             systemctl daemon-reload
         fi
         # Ensure the hypernode oomkiller is enabled and started
-        systemctl enable hypernode-kamikaze 2> /dev/null || /bin/true
-        systemctl start hypernode-kamikaze 2> /dev/null || /bin/true
+        systemctl enable hypernode-oom-monitor 2> /dev/null || /bin/true
+        systemctl start hypernode-oom-monitor 2> /dev/null || /bin/true
     else
         echo "Ensuring memory management is enabled using cgconfig"
         rm -f /etc/init/cgconfig.override
@@ -198,8 +198,8 @@ else
             systemctl daemon-reload
         fi
         # Ensure the hypernode oomkiller is disabled and stopped
-        systemctl disable hypernode-kamikaze 2> /dev/null || /bin/true
-        systemctl stop hypernode-kamikaze 2> /dev/null || /bin/true
+        systemctl disable hypernode-oom-monitor 2> /dev/null || /bin/true
+        systemctl stop hypernode-oom-monitor 2> /dev/null || /bin/true
     fi
 fi
 
