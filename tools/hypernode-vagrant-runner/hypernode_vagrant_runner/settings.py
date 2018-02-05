@@ -34,6 +34,7 @@ HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION = '7.0'
 
 HYPERNODE_VAGRANT_CONFIGURATION = """
 ---
+default_ports: false
 fs:
   type: rsync
 hostmanager:
