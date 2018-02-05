@@ -1,3 +1,4 @@
+PRECISE_UNAVAILABLE_PHP = ['5.6', '7.1']
 HYPERNODE_VAGRANT_REPOSITORY = 'https://github.com/byteinternet/hypernode-vagrant'
 REQUIRED_VAGRANT_PLUGINS = [
     'vagrant-vbguest',
@@ -6,7 +7,8 @@ REQUIRED_VAGRANT_PLUGINS = [
 HYPERNODE_VAGRANT_PHP_VERSIONS = [
     '5.5',
     '5.6',
-    '7.0'
+    '7.0',
+    '7.1'
 ]
 HYPERNODE_VAGRANT_BOX_NAMES = {
     '5.5': 'hypernode_php5',
@@ -28,8 +30,7 @@ HYPERNODE_VAGRANT_USERS = [
     'vagrant'
 ]
 
-# Use the last available PHP version as the default
-HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION = HYPERNODE_VAGRANT_PHP_VERSIONS[-1]
+HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION = '7.0'
 
 HYPERNODE_VAGRANT_CONFIGURATION = """
 ---

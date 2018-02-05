@@ -18,7 +18,7 @@ class TestWriteHypernodeVagrantConfiguration(TestCase):
         rmtree(self.temp_dir, ignore_errors=True)
 
     def test_write_hypernode_vagrant_configuration_writes_configuration(self):
-        write_hypernode_vagrant_configuration(self.temp_dir)
+        write_hypernode_vagrant_configuration(self.temp_dir, xenial=False)
 
         with open(self.temp_config_file) as f:
             ret = f.read()
@@ -36,7 +36,7 @@ class TestWriteHypernodeVagrantConfiguration(TestCase):
         self.assertEqual(ret, expected_configuration)
 
     def test_write_hypernode_vagrant_configuration_writes_config_with_specified_php_version(self):
-        write_hypernode_vagrant_configuration(self.temp_dir, php_version='5.5')
+        write_hypernode_vagrant_configuration(self.temp_dir, php_version='5.5', xenial=False)
 
         with open(self.temp_config_file) as f:
             ret = f.read()
@@ -54,7 +54,7 @@ class TestWriteHypernodeVagrantConfiguration(TestCase):
         self.assertEqual(ret, expected_configuration)
 
     def test_write_hypernode_vagrant_configuration_writes_config_with_xdebug_enabled_if_specified(self):
-        write_hypernode_vagrant_configuration(self.temp_dir, xdebug_enabled=True)
+        write_hypernode_vagrant_configuration(self.temp_dir, xdebug_enabled=True, xenial=False)
 
         with open(self.temp_config_file) as f:
             ret = f.read()
@@ -84,3 +84,19 @@ class TestWriteHypernodeVagrantConfiguration(TestCase):
             ubuntu_version='xenial'
         )
         self.assertEqual(ret, expected_configuration)
+
+    def test_write_hypernode_vagrant_configuration_writes_config_with_specified_xenial_exclusive_php_version(self):
+        write_hypernode_vagrant_configuration(self.temp_dir, php_version='7.1')
+        # PHP 7.1 is not available in the Ubuntu Precise hypernode-vagrant
+
+        with open(self.temp_config_file) as f:
+            ret = f.read()
+        expected_configuration = HYPERNODE_VAGRANT_CONFIGURATION.format(
+            xdebug_enabled='false',
+            php_version='7.1',
+            box_name=HYPERNODE_XENIAL_BOX_NAME,
+            box_url=HYPERNODE_XENIAL_URL,
+            ubuntu_version='xenial'
+        )
+        self.assertEqual(ret, expected_configuration)
+

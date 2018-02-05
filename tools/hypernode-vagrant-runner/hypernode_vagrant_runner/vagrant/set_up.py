@@ -99,7 +99,7 @@ def write_hypernode_vagrant_configuration(
         directory,
         php_version=HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION,
         xdebug_enabled=False,
-        xenial=False
+        xenial=True
 ):
     """
     Write the hypernode-vagrant local.yml configuration file to the
