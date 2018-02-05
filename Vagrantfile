@@ -76,12 +76,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provider :virtualbox do |vbox, override|
       override.vm.network "private_network", type: "dhcp"
-      vbox.memory = 2048
+      vbox.memory = settings["memory"] ||= 2048
       vbox.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
     end
 
     config.vm.provider :lxc do |lxc, override|
-      lxc.customize 'cgroup.memory.limit_in_bytes', '2048M'
+      lxc.customize 'cgroup.memory.limit_in_bytes', "#{(settings['memory'] ||= 2048)}M"
       if File.exists?('/etc/redhat-release')
         lxc.customize 'network.link', 'virbr0'
       end
