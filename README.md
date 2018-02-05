@@ -73,7 +73,9 @@ Voila! Access your local Hypernode through [http://hypernode.local/](http://hype
 
 ### Using vagrant with LXC (Linux only)
 
-Virtualbox can be rather slow. In case you are on Linux you can also use LXC instead. You must also install the [redir](http://manpages.ubuntu.com/manpages/xenial/man1/redir.1.html) package.
+Virtualbox can be rather slow. In case you are on Linux you can also use LXC instead. 
+
+You must also install the [redir](http://manpages.ubuntu.com/manpages/xenial/man1/redir.1.html) package. Alternatively you could disable [port forwarding](https://www.vagrantup.com/docs/networking/forwarded_ports.html) by adding `default_ports: false` to your `local.xml`.
 
 To do this, change the synced folder type in local.yml to something other than virtualbox like rsync or nfs:
 ```
