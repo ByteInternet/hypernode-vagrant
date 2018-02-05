@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from hypernode_vagrant_runner.log import setup_logging
 from hypernode_vagrant_runner.runner import launch_runner
 from hypernode_vagrant_runner.settings import HYPERNODE_VAGRANT_PHP_VERSIONS, HYPERNODE_VAGRANT_DEFAULT_PHP_VERSION, \
-    HYPERNODE_VAGRANT_DEFAULT_USER, HYPERNODE_VAGRANT_USERS, UPLOAD_PATH
+    HYPERNODE_VAGRANT_DEFAULT_USER, HYPERNODE_VAGRANT_USERS, UPLOAD_PATH, PRECISE_UNAVAILABLE_PHP
 
 
 def parse_arguments(parser):
@@ -86,10 +86,10 @@ def parse_start_runner_arguments():
         help='Run "vagrant up" with the --no-provision flag'
     )
     args = parse_arguments(parser)
-    if not args.xenial and args.php == '5.6':
+    if not args.xenial and args.php in PRECISE_UNAVAILABLE_PHP:
         parser.error(
-            "Can't use the Precise Hypernode with PHP5.6. "
-            "Add the --xenial flag to use the Xenial version"
+            "Can't use the Precise Hypernode with PHP{}. "
+            "Add the --xenial flag to use the Xenial version".format(args.php)
         )
     return args
 
