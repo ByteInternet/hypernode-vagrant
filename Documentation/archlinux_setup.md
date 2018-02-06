@@ -14,8 +14,6 @@ If you encounter any issues relating to `vagrant-lxc` and not `hypernode-vagrant
 pacman -S rsync dnsmasq git lxc vagrant --needed --noconfirm
 ```
 
-You will also need to install [redir](https://linux.die.net/man/1/redir). Alternatively you could disable [port forwarding](https://www.vagrantup.com/docs/networking/forwarded_ports.html) by adding `default_ports: false` to your `local.yml`.
-
 ### Create the configuration file for the LXC's NAT bridge
 
 For more information about this and the following step see the host network configuration setting section of [this article about Linux Containers](https://wiki.archlinux.org/index.php/Linux_Containers) on the ArchWiki.

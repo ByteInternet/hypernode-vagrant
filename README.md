@@ -75,8 +75,6 @@ Voila! Access your local Hypernode through [http://hypernode.local/](http://hype
 
 Virtualbox can be rather slow. In case you are on Linux you can also use LXC instead. 
 
-You must also install the [redir](http://manpages.ubuntu.com/manpages/xenial/man1/redir.1.html) package. Alternatively you could disable [port forwarding](https://www.vagrantup.com/docs/networking/forwarded_ports.html) by adding `default_ports: false` to your `local.yml`.
-
 To do this, change the synced folder type in local.yml to something other than virtualbox like rsync or nfs:
 ```
     fs:
@@ -266,6 +264,47 @@ Vagrant will notice the magento version changed and correct the shared folders s
     ==> hypernode: Disabling fs->folders->magento1 in the local.yml because Magento 2 was configured..
 ```
 
+
+## Change the allocated memory
+
+By default 2048M of memory is allocated to the hypernode, this value can be altered. To do so change the `memory` section in your `local.yml` to any valid value.
+
+```
+memory: 4096
+```
+
+For LXC it's enough to issue the `vagrant reload` command.
+
+For VirtualBox a rebuild of the machine is required. If `vagrant up` is issued for the first time the machine will be build with the specified `memory`. Otherwise a `vagrant destroy` should be issued first.
+If there is no possibility to issue `vagrant destroy` (due to local changes) the memory can be adjusted through the VirtualBox GUI. 
+
+
+## Port forwarding
+
+There is no port forwarding enabled by default, except for the default SSH forward managed by Vagrant. 
+Port forwarding can be set up by modifying the `ports: false` section in your `local.yml`.
+
+```
+ports:
+- send: 8080
+  to: 80
+- send: 33060
+  to: 3306
+- send: 2222
+  to: 22
+```
+
+Ports will be bound to 127.0.0.1 by default, which means the forward will only be accessible from the local machine.
+If remote access is wished a separate `bind-addr` can be added to those in question.
+
+ ```
+ ports:
+ - send: 8080
+   to: 80
+   bind-addr: 0.0.0.0
+ ```
+
+For LXC it's required to have the [redir](http://manpages.ubuntu.com/manpages/xenial/man1/redir.1.html) package installed.
 
 ## Troubleshooting
 
