@@ -87,37 +87,26 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
 
-    # Standardize Ports Naming Schema
-    if (settings.has_key?("ports"))
+    if (settings.has_key?("ports") && settings["ports"] != false)
+	  # Standardize Ports Naming Schema
       settings["ports"].each do |port|
         port["guest"] ||= port["to"]
         port["host"] ||= port["send"]
         port["protocol"] ||= "tcp"
+        port["bind-addr"] ||= "127.0.0.1"
       end
-    else
-      settings["ports"] = []
-    end
 
-    # Default Port Forwarding
-    default_ports = {
-      80 => 8080,
-      3306 => 3307,
-    }
+      # Add Custom Ports From Configuration
+      if settings.has_key?("ports")
+        settings["ports"].each do |port|
+          # Unset default SSH forward in case the user has defined it's own.
+          if (port["guest"] == 22)
+            config.vm.network "forwarded_port", guest: 22, host: 2222, id: "ssh", disabled: true
+          end
 
-    # Use Default Port Forwarding Unless Overridden
-    unless settings.has_key?("default_ports") && settings["default_ports"] == false
-      default_ports.each do |guest, host|
-        unless settings["ports"].any? { |mapping| mapping["guest"] == guest }
-          config.vm.network "forwarded_port", guest: guest, host: host, host_ip: "0.0.0.0", auto_correct: true
-        end
+          config.vm.network "forwarded_port", guest: port["guest"], host: port["host"], host_ip: port["bind-addr"], protocol: port["protocol"], auto_correct: true
+         end
       end
-    end
-
-    # Add Custom Ports From Configuration
-    if settings.has_key?("ports")
-      settings["ports"].each do |port|
-        config.vm.network "forwarded_port", guest: port["guest"], host: port["host"], host_ip: "0.0.0.0", protocol: port["protocol"], auto_correct: true
-       end
     end
 
     if Vagrant.has_plugin?("vagrant-hostmanager")
@@ -181,7 +170,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
     rescue NoMethodError
       if File.exists?(SETTINGS_FILE) and !File.exists?("invalid_" + SETTINGS_FILE)
-	moved_file = "invalid_%s_#{SETTINGS_FILE}" % [rand(36 ** 8).to_s(36)]
+        moved_file = "invalid_%s_#{SETTINGS_FILE}" % [rand(36 ** 8).to_s(36)]
         FileUtils.mv(SETTINGS_FILE, moved_file)
         abort(<<-HEREDOC
 Looks like your configuration file was corrupt or not compatible with this version of hypernode-vagrant.

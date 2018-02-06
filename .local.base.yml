@@ -1,3 +1,5 @@
+ports: false
+memory: 2048
 fs:
   folders:
     magento2:
