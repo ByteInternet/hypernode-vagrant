@@ -89,7 +89,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provider :lxc do |lxc, override|
       # Allow a static IP to be assigned if defined in the settings
       if (settings.has_key?("ip") && settings["ip"] != "dhcp")
-        config.vm.network "private_network", ip: settings["ip"], lxc__bridge_name: 'vlxcbr1'
+        override.vm.network "private_network", ip: settings["ip"], lxc__bridge_name: 'vlxcbr1'
       end
 
       lxc.customize 'cgroup.memory.limit_in_bytes', "#{(settings['memory'] ||= 2048)}M"
