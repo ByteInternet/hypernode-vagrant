@@ -87,7 +87,7 @@ Then install the vagrant-lxc plugin:
     vagrant up --provider lxc
 ```
 
-Even though we do not officially support it, if you insist of running the box on Arch Linux see [this document](https://github.com/ByteInternet/hypernode-vagrant/blob/master/Documentation/archlinux_setup.md) for additional instructions.
+Even though we do not officially support it, if you insist of running the box on Arch Linux see [this document](Documentation/archlinux_setup.md) for additional instructions.
 
 
 ## Using the test environment
