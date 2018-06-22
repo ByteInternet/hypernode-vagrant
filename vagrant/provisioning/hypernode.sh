@@ -73,6 +73,9 @@ fi
 if ! find /data/web/public/ -mindepth 1 -name '*.php' -name '*.html' | read; then
     cp /vagrant/vagrant/resources/*.{php,js,css} /data/web/public/
     chown -R $user:$user /data/web/public
+    if test -d /data/web/magento2; then
+       chown -R $user:$user /data/web/magento2
+    fi
 fi
 
 # Start the correct FPM daemon
