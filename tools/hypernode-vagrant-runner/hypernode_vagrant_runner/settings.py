@@ -1,4 +1,4 @@
-PRECISE_UNAVAILABLE_PHP = ['5.6', '7.1']
+PRECISE_UNAVAILABLE_PHP = ['5.6', '7.1', '7.2']
 HYPERNODE_VAGRANT_REPOSITORY = 'https://github.com/byteinternet/hypernode-vagrant'
 REQUIRED_VAGRANT_PLUGINS = [
     'vagrant-vbguest',
@@ -8,7 +8,8 @@ HYPERNODE_VAGRANT_PHP_VERSIONS = [
     '5.5',
     '5.6',
     '7.0',
-    '7.1'
+    '7.1',
+    '7.2'
 ]
 HYPERNODE_VAGRANT_BOX_NAMES = {
     '5.5': 'hypernode_php5',

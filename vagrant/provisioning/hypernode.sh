@@ -99,6 +99,7 @@ if $xdebug_enabled; then
         which php5.6 && PHP_VERSION="php5.6" || /bin/true
         which php7.0 && PHP_VERSION="php7.0" || /bin/true
         which php7.1 && PHP_VERSION="php7.1" || /bin/true
+        which php7.2 && PHP_VERSION="php7.2" || /bin/true
     
         if [ -z $PHP_VERSION ]; then
             echo "No supported PHP version found for this xdebug installation script. Skipping.."
@@ -126,6 +127,7 @@ if $xdebug_enabled; then
             [ "$PHP_VERSION" == "php5.6" ] && MODULES_DIR="/usr/lib/php5/20131226/"
             [ "$PHP_VERSION" == "php7.0" ] && MODULES_DIR="/usr/lib/php/20151012/"
             [ "$PHP_VERSION" == "php7.1" ] && MODULES_DIR="/usr/lib/php/20160303/"
+            [ "$PHP_VERSION" == "php7.2" ] && MODULES_DIR="/usr/lib/php/20170718/"
             cp -f modules/xdebug.so $MODULES_DIR
     
             [ "$PHP_VERSION" == "php5" ] && PHP_DIR="/etc/php5/"
@@ -133,6 +135,7 @@ if $xdebug_enabled; then
             [ "$PHP_VERSION" == "php5.6" ] && PHP_DIR="/etc/php/5.6/"
             [ "$PHP_VERSION" == "php7.0" ] && PHP_DIR="/etc/php/7.0/"
             [ "$PHP_VERSION" == "php7.1" ] && PHP_DIR="/etc/php/7.1/"
+            [ "$PHP_VERSION" == "php7.2" ] && PHP_DIR="/etc/php/7.2/"
     
             # Configure PHP to load xdebug.so
             for i in fpm cli; do
@@ -149,6 +152,7 @@ if $xdebug_enabled; then
        [ "$PHP_VERSION" == "php5.6" ] && service php5.6-fpm restart
        [ "$PHP_VERSION" == "php7.0" ] && service php7.0-fpm restart
        [ "$PHP_VERSION" == "php7.1" ] && service php7.1-fpm restart
+       [ "$PHP_VERSION" == "php7.2" ] && service php7.2-fpm restart
        service nginx restart
     fi
     echo ""

@@ -5,7 +5,7 @@ DEFAULT_MAGENTO_VERSION = 2
 AVAILABLE_MAGENTO_VERSIONS = [1, 2]
 
 DEFAULT_PHP_VERSION = 7.0
-AVAILABLE_PHP_VERSIONS = [5.5, 5.6, 7.0, 7.1]
+AVAILABLE_PHP_VERSIONS = [5.5, 5.6, 7.0, 7.1, 7.2]
 
 DEFAULT_VARNISH_STATE = false
 AVAILABLE_VARNISH_STATES = [true, false]
@@ -292,7 +292,7 @@ HEREDOC
         settings['vagrant']['box'] = 'hypernode_xenial'
         settings['vagrant']['box_url'] = 'http://vagrant.hypernode.com/customer/xenial/catalog.json'
       else
-        if [5.6, 7.1].include? settings['php']['version']
+        if [5.6, 7.1, 7.2].include? settings['php']['version']
           env[:ui].warning("The Precise Hypernodes don't have PHP#{settings['php']['version']}. Falling back to 5.5. Use the Xenial version of this box if you want PHP#{settings['php']['version']}")
           settings['php']['version'] = 5.5
         end
