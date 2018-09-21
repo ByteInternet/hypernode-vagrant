@@ -15,6 +15,7 @@ settings = YAML.load_file(SETTINGS_FILE) rescue Hash.new(Hash.new(nil))
 require_relative 'vagrant/plugins/inline/ensure-varnish.rb'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # run hypernode-vagrant configuration wizard if needed during 'vagrant up'
+  config.vagrant.plugins = {"vagrant-hypconfigmgmt" => {"version" => VAGRANT_HYPCONFIGMGMT_VERSION}}
   config.hypconfigmgmt.enabled = true  
 
   config.ssh.forward_agent = true

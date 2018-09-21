@@ -30,7 +30,7 @@ You can start developing on your own local Hypernode within 15 minutes.
 vagrant plugin install vagrant-hypconfigmgmt
 ```
 
-If you wish to run an earlier revision of `hypernode-vagrant` you can install an earlier matching `vagrant-hypconfigmgmt` by for example running `vagrant plugin install vagrant-hypconfigmgmt --plugin-version 0.0.10`. Automatically installing the correct bundled plugin no longer works since [Augustus 31 2018](https://stackoverflow.com/a/28801317).
+If you wish to run an earlier revision of `hypernode-vagrant` you can install an earlier matching `vagrant-hypconfigmgmt` by for example running `vagrant plugin install vagrant-hypconfigmgmt --plugin-version 0.0.10`.
 
 ### Configuring your hypernode vagrant
 
