@@ -3,6 +3,8 @@
 
 # Hypernode test environment for MacOSX and Linux
 
+NOTICE: This project has been deprecated in favor of [hypernode-docker](https://github.com/ByteInternet/hypernode-docker). It is possible to keep using this Vagrant Virtualbox and LXC box, but we will push no further box updates. Since we have released the [official Hypernode Docker image for Magento development](https://community.hypernode.io/hypernode-docker/) we have seen that most users prefer that over Vagrant for the advantages in performance and compatibility, and we encourage all `hypernode-vagrant` users to switch to that. If you wish to continue using the `hypernode-vagrant` boxfiles that is possible, but note that no new box files will be uploaded. However, it is possible to still receive newer versions of Hypernode related tooling by manually running `apt-get update` and `apt-get upgrade`. Note that official support from Byte on this box is no longer available though.
+
 You can start developing on your own local Hypernode within 15 minutes.
 
 ## Starting the test environment
