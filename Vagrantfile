@@ -7,12 +7,6 @@ require 'fileutils'
 VAGRANTFILE_API_VERSION = "2"
 VAGRANT_HYPCONFIGMGMT_VERSION = "0.0.11"
 
-# if vagrant-hypconfigmgmt is not installed, install it and abort
-if !Vagrant.has_plugin?("vagrant-hypconfigmgmt", version = VAGRANT_HYPCONFIGMGMT_VERSION) && !ARGV.include?("plugin") && !ARGV.include?("status")
-  system("vagrant plugin install vagrant-hypconfigmgmt --plugin-version #{VAGRANT_HYPCONFIGMGMT_VERSION}")
-  abort "Installed the vagrant-hypconfigmgmt plugin.\nFor the next configuration step, please again run: \"vagrant up\""
-end
-
 # path to local settings file
 SETTINGS_FILE = "local.yml"
 # load the settingsfile or if it does not exist yet a hash where every attribute two levels deep is nil
@@ -21,6 +15,7 @@ settings = YAML.load_file(SETTINGS_FILE) rescue Hash.new(Hash.new(nil))
 require_relative 'vagrant/plugins/inline/ensure-varnish.rb'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # run hypernode-vagrant configuration wizard if needed during 'vagrant up'
+  config.vagrant.plugins = {"vagrant-hypconfigmgmt" => {"version" => VAGRANT_HYPCONFIGMGMT_VERSION}}
   config.hypconfigmgmt.enabled = true  
 
   config.ssh.forward_agent = true

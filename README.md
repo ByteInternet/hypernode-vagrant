@@ -27,6 +27,13 @@ You can start developing on your own local Hypernode within 15 minutes.
     vagrant up --provider virtualbox
 ```
 
+4. Install the (latest) [vagrant-hypconfigmgmt](https://rubygems.org/gems/vagrant-hypconfigmgmt/versions/) Vagrant plugin
+```
+vagrant plugin install vagrant-hypconfigmgmt
+```
+
+If you wish to run an earlier revision of `hypernode-vagrant` you can install an earlier matching `vagrant-hypconfigmgmt` by for example running `vagrant plugin install vagrant-hypconfigmgmt --plugin-version 0.0.10`.
+
 ### Configuring your hypernode vagrant
 
 The first time you run `vagrant up` after downloading the hypernode-vagrant zip file or cloning this git repository, some user input is required to prepare and setup some configuration:
